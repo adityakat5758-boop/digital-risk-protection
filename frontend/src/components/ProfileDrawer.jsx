@@ -125,7 +125,7 @@ export default function ProfileDrawer() {
                     <div className="mb-2 flex items-center justify-between gap-3">
                       <span className="inline-block rounded-full bg-red-500/15 px-2.5 py-0.5 text-xs font-semibold text-red-300 ring-1 ring-red-500/30">{m.analysis.type}</span>
                       <button data-testid={`send-to-analyzer-${m.id}`} onClick={() => sendToAnalyzer(m.text)} className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium text-teal-300 transition-colors hover:bg-teal-500/10 hover:text-teal-200">
-                        <ScanSearch className="h-4 w-4" /> Open in Scam Analyzer
+                        <ScanSearch className="h-4 w-4" /> Send to Analyzer
                       </button>
                     </div>
                     <p className="text-sm text-slate-300">{m.text}</p>
