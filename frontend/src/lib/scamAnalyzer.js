@@ -36,8 +36,11 @@ export function extractEntities(text) {
   return { links, phones, upis: [...new Set(upis)] };
 }
 
+export const MAX_MESSAGE_LENGTH = 2000;
+
 // Synchronous core: keyword hits per category + boosters -> type and confidence.
-export function analyzeText(text, { officialDomains = DEFAULT_OFFICIAL } = {}) {
+export function analyzeText(rawText, { officialDomains = DEFAULT_OFFICIAL } = {}) {
+  const text = String(rawText).slice(0, MAX_MESSAGE_LENGTH);
   const hitsByCategory = Object.fromEntries(
     Object.entries(CATEGORIES).map(([cat, kws]) => [cat, kws.filter((kw) => keywordRegex(kw).test(text))])
   );

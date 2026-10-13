@@ -13,8 +13,9 @@ const Graph2D = dynamic(() => import('react-force-graph-2d'), { ssr: false, load
 
 const HEIGHT = 440;
 const nodeColor = (n) => (n.isBrand ? '#2dd4bf' : BAND_STYLES[n.band].hex);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const tooltip = (n) =>
-  `<div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:6px 10px;font:14px Inter,sans-serif;color:#e2e8f0">${n.isBrand ? `<b>${n.label}</b> (official)` : `<b>${n.label}</b><br/>Risk score: ${n.score}`}</div>`;
+  `<div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:6px 10px;font:14px Inter,sans-serif;color:#e2e8f0">${n.isBrand ? `<b>${esc(n.label)}</b> (official)` : `<b>${esc(n.label)}</b><br/>Risk score: ${esc(n.score)}`}</div>`;
 
 export default function ThreatNetwork() {
   const { data, openProfile } = useApp();
@@ -41,7 +42,7 @@ export default function ThreatNetwork() {
     nodeVal: 'val',
     linkColor: (l) => (l.kind === 'shared' ? 'rgba(248,113,113,0.85)' : 'rgba(100,116,139,0.35)'),
     linkWidth: (l) => (l.kind === 'shared' ? 2 : 0.6),
-    linkLabel: (l) => l.label || '',
+    linkLabel: (l) => esc(l.label || ''),
     onNodeClick: (n) => !n.isBrand && openProfile(n.id),
     cooldownTicks: 120,
     ref: fg,

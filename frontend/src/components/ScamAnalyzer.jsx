@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { AlertOctagon, CheckCircle2, Languages, Link2, Phone, Sparkles, Wallet } from 'lucide-react';
 import { useApp } from './AppContext';
 import { Button, Card, PageHeader } from './common';
-import { analyzeMessage, keywordRegex } from '@/lib/scamAnalyzer';
+import { analyzeMessage, keywordRegex, MAX_MESSAGE_LENGTH } from '@/lib/scamAnalyzer';
 
 function Highlighted({ text, keywords }) {
   if (!keywords.length) return text;
@@ -97,6 +97,7 @@ export default function ScamAnalyzer() {
             <textarea
               data-testid="scam-textarea"
               value={text}
+              maxLength={MAX_MESSAGE_LENGTH}
               onChange={(e) => setText(e.target.value)}
               rows={7}
               placeholder="e.g. Badhai ho! Aap lucky draw ke winner hain..."
