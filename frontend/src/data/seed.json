@@ -1,0 +1,62 @@
+{
+  "brand": {
+    "name": "Zenvyra",
+    "handle": "zenvyra",
+    "platform": "Instagram",
+    "verified": true,
+    "followers": 482000,
+    "following": 112,
+    "createdYear": 2019,
+    "bio": "Zenvyra | Pure Ayurvedic skincare 🌿 Free shipping above ₹499 | Support: support@zenvyra.in",
+    "link": "zenvyra.in",
+    "officialDomains": ["zenvyra.in"],
+    "officialApp": "Zenvyra - Shop Skincare",
+    "officialDeveloper": "Zenvyra Retail Pvt Ltd"
+  },
+  "profiles": [
+    { "id": "p1", "platform": "Instagram", "handle": "zenvyra.official_", "displayName": "Zenvyra Official", "bio": "Zenvyra | Pure Ayurvedic skincare 🌿 Free shipping above ₹499 | Support: support@zenvyra.in", "link": "zenvyra-offers.in", "followers": 1200, "following": 3400, "accountAgeDays": 6, "logoSimilarity": 0.96, "verified": false },
+    { "id": "p2", "platform": "Instagram", "handle": "zenvyra_in", "displayName": "Zenvyra India", "bio": "Zenvyra | Pure Ayurvedic skincare 🌿 Free shipping above ₹499 | Help: support@zenvyra.in", "link": "zenvyra.shop", "followers": 2100, "following": 1800, "accountAgeDays": 14, "logoSimilarity": 0.92, "verified": false },
+    { "id": "p3", "platform": "Instagram", "handle": "zenvyr4", "displayName": "Zenvyra Store", "bio": "Official Zenvyra store ✨ Glow naturally", "link": "bit.ly/zv-sale", "followers": 90, "following": 2600, "accountAgeDays": 3, "logoSimilarity": 0.88, "verified": false },
+    { "id": "p4", "platform": "Instagram", "handle": "zenvyra_giveaway", "displayName": "Zenvyra Giveaways", "bio": "Win Zenvyra hampers! Follow + share 🎁", "link": "tinyurl.com/zv-win", "followers": 60, "following": 1800, "accountAgeDays": 9, "logoSimilarity": 0.85, "verified": false },
+    { "id": "p5", "platform": "Facebook", "handle": "zenvyra.customercare", "displayName": "Zenvyra Customer Care", "bio": "Helpline for orders, refunds & complaints. Call 90000 12345 (24x7)", "link": "wa.me/919000012345", "followers": 150, "following": 3200, "accountAgeDays": 21, "logoSimilarity": 0.9, "verified": false },
+    { "id": "p6", "platform": "Telegram", "handle": "zenvyra_helpdesk", "displayName": "Zenvyra Helpdesk", "bio": "Refunds & support 24x7", "link": "t.me/zenvyra_help", "followers": 40, "following": 1500, "accountAgeDays": 11, "logoSimilarity": 0.87, "verified": false },
+    { "id": "p7", "platform": "X", "handle": "zenvyra_offcial", "displayName": "Zenvyra", "bio": "Zenvyra | Pure Ayurvedic skincare 🌿 Free shipping above ₹499 | Support: support@zenvyra.in", "link": "zenvyra-store.com", "followers": 3400, "following": 2900, "accountAgeDays": 40, "logoSimilarity": 0.9, "verified": false },
+    { "id": "p8", "platform": "Instagram", "handle": "zenvyra.shop_", "displayName": "Zenvyra Shop", "bio": "Zenvyra | Pure Ayurvedic skincare 🌿 Free shipping above ₹499 | Support: support@zenvyra.in", "link": "zenvyra-sale.in", "followers": 860, "following": 1400, "accountAgeDays": 18, "logoSimilarity": 0.94, "verified": false },
+    { "id": "p9", "platform": "Instagram", "handle": "zenvyra_reseller_delhi", "displayName": "Zenvyra Reseller Delhi", "bio": "Discounted skincare from top brands. Bulk orders across Delhi NCR. DM to order.", "link": "wa.me/919000067890", "followers": 3100, "following": 950, "accountAgeDays": 25, "logoSimilarity": 0.5, "verified": false },
+    { "id": "p10", "platform": "Instagram", "handle": "zenvyra_skincare_tips", "displayName": "Zenvyra Skincare Tips", "bio": "Daily routines and honest reviews of Ayurvedic products. Not affiliated with any brand.", "link": "", "followers": 5400, "following": 700, "accountAgeDays": 60, "logoSimilarity": 0.3, "verified": false },
+    { "id": "p11", "platform": "Facebook", "handle": "zenvyra.beauty.lovers", "displayName": "Zenvyra Beauty Lovers Group", "bio": "Fan community to share reviews, routines and looks. Not run by the brand.", "link": "", "followers": 12800, "following": 40, "accountAgeDays": 700, "logoSimilarity": 0.86, "verified": false },
+    { "id": "p12", "platform": "X", "handle": "zenvyra_deals_ind", "displayName": "Zenvyra Deals India", "bio": "Tracking the best skincare discounts across India 🔥", "link": "bit.ly/zv-deals", "followers": 2200, "following": 1300, "accountAgeDays": 75, "logoSimilarity": 0.4, "verified": false },
+    { "id": "g1", "platform": "Instagram", "handle": "glowwithananya", "displayName": "Ananya | Skin Diaries", "bio": "Dermat-approved routines, honest reviews and sunscreen obsession. Mumbai 🌸", "link": "glowwithananya.com", "followers": 48200, "following": 610, "accountAgeDays": 1460, "logoSimilarity": 0.05, "verified": false },
+    { "id": "g2", "platform": "Instagram", "handle": "minimalist_skin_co", "displayName": "Minimalist Skin Co", "bio": "Clean, effective formulations backed by science.", "link": "minimalistskin.co", "followers": 210000, "following": 340, "accountAgeDays": 1900, "logoSimilarity": 0.1, "verified": false },
+    { "id": "g3", "platform": "Instagram", "handle": "rohan.fitlife", "displayName": "Rohan Mehta", "bio": "Fitness coach. Meal prep, gym and grooming tips for men.", "link": "", "followers": 15400, "following": 890, "accountAgeDays": 980, "logoSimilarity": 0.02, "verified": false },
+    { "id": "g4", "platform": "Facebook", "handle": "priya.sharma.92", "displayName": "Priya Sharma", "bio": "Teacher | Mom of two | Loves gardening", "link": "", "followers": 820, "following": 640, "accountAgeDays": 3200, "logoSimilarity": 0.01, "verified": false },
+    { "id": "g5", "platform": "X", "handle": "dermdoc_meera", "displayName": "Dr. Meera Iyer", "bio": "MD Dermatology. Evidence-based skin advice. Views are my own.", "link": "meeraiyerclinic.in", "followers": 92000, "following": 410, "accountAgeDays": 2400, "logoSimilarity": 0.03, "verified": false },
+    { "id": "g6", "platform": "Instagram", "handle": "kumkumadi_kitchen", "displayName": "Kumkumadi Kitchen", "bio": "DIY home remedies & Ayurveda recipes passed down from Nani.", "link": "", "followers": 26700, "following": 1200, "accountAgeDays": 1100, "logoSimilarity": 0.08, "verified": false },
+    { "id": "g7", "platform": "Telegram", "handle": "skincare_india_community", "displayName": "Skincare India Community", "bio": "Discussion group for skincare enthusiasts across India. No selling.", "link": "", "followers": 5400, "following": 3, "accountAgeDays": 800, "logoSimilarity": 0.04, "verified": false },
+    { "id": "g8", "platform": "Facebook", "handle": "herbalessencejaipur", "displayName": "Herbal Essence Store Jaipur", "bio": "Family-run herbal shop since 1998.", "link": "herbalessencejaipur.com", "followers": 3400, "following": 150, "accountAgeDays": 2900, "logoSimilarity": 0.06, "verified": false },
+    { "id": "g9", "platform": "X", "handle": "aarav_reviews", "displayName": "Aarav Kapoor", "bio": "Tech and lifestyle reviews. Coffee addict.", "link": "", "followers": 7800, "following": 920, "accountAgeDays": 1500, "logoSimilarity": 0.02, "verified": false },
+    { "id": "g10", "platform": "Instagram", "handle": "the.sunscreen.girl", "displayName": "The Sunscreen Girl", "bio": "Sunscreen reviews for Indian skin. SPF is self care ☀️", "link": "", "followers": 61000, "following": 700, "accountAgeDays": 1300, "logoSimilarity": 0.07, "verified": false }
+  ],
+  "messages": [
+    { "id": "m1", "platform": "Instagram", "linkedProfileId": "p4", "text": "🎉 Congratulations! You've won a Zenvyra Gift Hamper worth ₹15,000 in our Diwali lucky draw. Claim now: bit.ly/zv-claim. Pay ₹99 delivery fee on UPI zenvyra@okaxis" },
+    { "id": "m2", "platform": "Instagram", "linkedProfileId": "p4", "text": "Badhai ho! Aap Zenvyra ke lucky draw ke winner hain 🎁 Inaam paane ke liye is link pe click karein aur apna WhatsApp number bhejein." },
+    { "id": "m3", "platform": "Instagram", "linkedProfileId": "p1", "text": "Your Zenvyra account is suspended due to incomplete KYC. Verify your login within 24 hours: zenvyra-verify.in/login" },
+    { "id": "m4", "platform": "Instagram", "linkedProfileId": "p2", "text": "Zenvyra order #48213 payment failed. Update your card details and enter the OTP here to avoid cancellation." },
+    { "id": "m5", "platform": "Facebook", "linkedProfileId": "p5", "text": "Zenvyra customer care: refund for your damaged order is pending. Call 90000 12345 or WhatsApp us now to get your money back." },
+    { "id": "m6", "platform": "Facebook", "linkedProfileId": "p5", "text": "Aapka refund atka hua hai. Zenvyra helpline 90000 12345 pe turant call karein. Pehle AnyDesk download karein." },
+    { "id": "m7", "platform": "Instagram", "linkedProfileId": "p4", "text": "Follow @zenvyra_giveaway, share this post with 10 friends and win an iPhone! Winners announced tonight." },
+    { "id": "m8", "platform": "Instagram", "linkedProfileId": "p3", "text": "Dear customer, your Zenvyra wallet has ₹2,500 cashback. Login to claim before it expires: tinyurl.com/zv-cash" },
+    { "id": "m9", "platform": "Telegram", "linkedProfileId": "p6", "text": "Zenvyra support: to cancel your order send ₹1 to verify your UPI ID zenvyra.help@ybl. Reply YES." },
+    { "id": "m10", "platform": "SMS", "linkedProfileId": null, "text": "Hi! Your Zenvyra order has shipped and will arrive by Friday. Track it at zenvyra.in/track" }
+  ],
+  "apps": [
+    { "id": "a1", "title": "Zenvyra - Shop Skincare", "developer": "Zenvyra Retail Pvt Ltd", "installs": 500000, "rating": 4.5, "permissions": ["Camera", "Notifications", "Storage"] },
+    { "id": "a2", "title": "Zenvyra Official Shop", "developer": "ZV Apps Studio", "installs": 2300, "rating": 2.9, "permissions": ["SMS", "Contacts", "Accessibility", "Overlay", "Camera", "Storage", "Location"] },
+    { "id": "a3", "title": "Zenvyra Rewards - Win Cash", "developer": "Fast Rewards Tech", "installs": 800, "rating": 3.1, "permissions": ["SMS", "Contacts", "Call Logs", "Overlay"] },
+    { "id": "a4", "title": "Zenvyra Lite", "developer": "Zenvyra Retail Ltd", "installs": 4000, "rating": 3.4, "permissions": ["SMS", "Accessibility", "Camera"] },
+    { "id": "a5", "title": "Skincare Deals by Zenvyra", "developer": "Deal Hub India", "installs": 12000, "rating": 3.8, "permissions": ["Contacts", "Storage"] },
+    { "id": "a6", "title": "GlowUp Skin Tracker", "developer": "Healthify Labs", "installs": 900000, "rating": 4.4, "permissions": ["Camera", "Notifications"] },
+    { "id": "a7", "title": "Daily Water Reminder", "developer": "Hydro Apps Inc", "installs": 2000000, "rating": 4.6, "permissions": ["Notifications"] },
+    { "id": "a8", "title": "Beauty Diary", "developer": "Pastel Studio", "installs": 150000, "rating": 4.2, "permissions": ["Camera", "Storage"] }
+  ]
+}
