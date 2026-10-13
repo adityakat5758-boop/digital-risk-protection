@@ -82,6 +82,7 @@ export default function Dashboard() {
   const reportedCount = Object.keys(reported).length;
   const fakeApps = apps.filter((a) => a.check.score >= 40).length;
   const scams = messages.filter((m) => m.analysis.isScam).length;
+  const platformCount = new Set(profiles.map((p) => p.platform)).size;
 
   return (
     <div>
@@ -92,7 +93,7 @@ export default function Dashboard() {
       </PageHeader>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Stat icon={Users} label="Profiles scanned" value={profiles.length} sub={(() => { const n = new Set(profiles.map((p) => p.platform)).size; return `Across ${n} platform${n === 1 ? '' : 's'}`; })()} testId="stat-profiles-scanned" delay="0ms" />
+        <Stat icon={Users} label="Profiles scanned" value={profiles.length} sub={`Across ${platformCount} platform${platformCount === 1 ? '' : 's'}`} testId="stat-profiles-scanned" delay="0ms" />
         <Stat icon={AlertTriangle} label="High-risk profiles" value={high.length} sub={`${reportedCount} reported`} testId="stat-high-risk" accent="text-red-400" delay="60ms" />
         <Stat icon={AppWindow} label="Fake apps found" value={fakeApps} sub={`of ${apps.length} listings checked`} testId="stat-fake-apps" accent="text-amber-400" delay="120ms" />
         <Stat icon={MessageSquareWarning} label="Scam messages analyzed" value={messages.length + analyzedCount} sub={`${scams} known scams in dataset`} testId="stat-scam-messages" delay="180ms" />
@@ -104,28 +105,33 @@ export default function Dashboard() {
       </div>
 
       <ThreatNetwork />
-
-      <Card className="mt-6 p-6">
-        <h2 className="text-lg font-semibold text-white">Top threats</h2>
-        <ul className="mt-4 divide-y divide-slate-800">
-          {profiles.slice(0, 3).map((p) => (
-            <li key={p.id}>
-              <button data-testid={`top-threat-${p.id}`} onClick={() => openProfile(p.id)} className="group flex w-full items-center gap-4 rounded-lg px-2 py-4 text-left transition-colors hover:bg-slate-800/50">
-                <Avatar name={p.displayName} />
-                <div className="min-w-0 flex-1">
-                  <p className="flex items-center gap-2 text-base font-semibold text-white">
-                    <PlatformIcon platform={p.platform} /> @{p.handle}
-                    {reported[p.id] && <span className="rounded-full bg-slate-700 px-2 py-0.5 text-xs text-slate-200">Reported</span>}
-                  </p>
-                  <p className="truncate text-sm text-slate-400">{topSignal(p.risk).reason}</p>
-                </div>
-                <RiskBadge band={p.risk.band} score={p.risk.score} />
-                <ChevronRight className="h-5 w-5 text-slate-600 transition-transform group-hover:translate-x-1 group-hover:text-teal-300" />
-              </button>
-            </li>
-          ))}
-        </ul>
-      </Card>
+      <TopThreats profiles={profiles.slice(0, 3)} reported={reported} onOpen={openProfile} />
     </div>
+  );
+}
+
+function TopThreats({ profiles, reported, onOpen }) {
+  return (
+    <Card className="mt-6 p-6">
+      <h2 className="text-lg font-semibold text-white">Top threats</h2>
+      <ul className="mt-4 divide-y divide-slate-800">
+        {profiles.map((p) => (
+          <li key={p.id}>
+            <button data-testid={`top-threat-${p.id}`} onClick={() => onOpen(p.id)} className="group flex w-full items-center gap-4 rounded-lg px-2 py-4 text-left transition-colors hover:bg-slate-800/50">
+              <Avatar name={p.displayName} />
+              <div className="min-w-0 flex-1">
+                <p className="flex items-center gap-2 text-base font-semibold text-white">
+                  <PlatformIcon platform={p.platform} /> @{p.handle}
+                  {reported[p.id] && <span className="rounded-full bg-slate-700 px-2 py-0.5 text-xs text-slate-200">Reported</span>}
+                </p>
+                <p className="truncate text-sm text-slate-400">{topSignal(p.risk).reason}</p>
+              </div>
+              <RiskBadge band={p.risk.band} score={p.risk.score} />
+              <ChevronRight className="h-5 w-5 text-slate-600 transition-transform group-hover:translate-x-1 group-hover:text-teal-300" />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </Card>
   );
 }

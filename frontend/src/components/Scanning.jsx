@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { CheckCircle2, Loader2, Radar } from 'lucide-react';
 import clsx from 'clsx';
 import { useApp } from './AppContext';
@@ -14,14 +14,16 @@ export default function Scanning() {
 
   useEffect(() => {
     const start = Date.now();
+    let done;
     const t = setInterval(() => {
       const e = Date.now() - start;
       setElapsed(Math.min(e, DURATION));
-      if (e >= DURATION) { clearInterval(t); setTimeout(finishScan, 200); }
+      if (e >= DURATION) { clearInterval(t); done = setTimeout(finishScan, 200); }
     }, 40);
-    return () => clearInterval(t);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    return () => { clearInterval(t); clearTimeout(done); };
+  }, [finishScan]);
 
+  const blips = useMemo(() => BLIPS.filter(([, , t]) => elapsed > t), [elapsed]);
   const pct = Math.round((elapsed / DURATION) * 100);
   const active = Math.min(STEPS.length - 1, Math.floor((elapsed / DURATION) * STEPS.length));
 
@@ -33,7 +35,7 @@ export default function Scanning() {
           <div className="absolute inset-x-0 top-1/2 h-px bg-teal-500/20" />
           <div className="absolute inset-y-0 left-1/2 w-px bg-teal-500/20" />
           <div className="absolute inset-0 animate-sweep rounded-full" style={{ background: 'conic-gradient(from 0deg, rgba(45,212,191,0.5), transparent 30%)' }} />
-          {BLIPS.filter(([, , t]) => elapsed > t).map(([x, y]) => (
+          {blips.map(([x, y]) => (
             <span key={`${x}-${y}`} className="absolute h-2.5 w-2.5 animate-ping rounded-full bg-red-400" style={{ left: `${x}%`, top: `${y}%` }} />
           ))}
           <Radar className="absolute inset-0 m-auto h-8 w-8 text-teal-300" />

@@ -31,8 +31,8 @@ export function AppProvider({ children }) {
 
   const data = useMemo(() => (brandName ? buildData(brandName) : null), [brandName]);
 
-  const value = {
-    data, status, view, reported, selectedId, analyzedCount,
+  // State setters are stable, so actions are created once and never go stale.
+  const actions = useMemo(() => ({
     setView,
     startScan: (name) => { setBrandName(name); setStatus('scanning'); },
     finishScan: () => { setStatus('ready'); setView('dashboard'); },
@@ -40,11 +40,15 @@ export function AppProvider({ children }) {
     closeProfile: () => setSelectedId(null),
     markReported: (id) => setReported((r) => ({ ...r, [id]: true })),
     recordAnalysis: () => setAnalyzedCount((c) => c + 1),
-    prefill,
     clearPrefill: () => setPrefill(null),
     sendToAnalyzer: (text) => { setPrefill(text); setSelectedId(null); setView('scam'); },
     openAnalyzerWith: (text) => { setPrefill(text); setStatus('ready'); setView('scam'); },
-  };
+  }), []);
+
+  const value = useMemo(
+    () => ({ data, status, view, reported, selectedId, analyzedCount, prefill, ...actions }),
+    [data, status, view, reported, selectedId, analyzedCount, prefill, actions]
+  );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

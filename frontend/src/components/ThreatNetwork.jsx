@@ -17,6 +17,30 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&
 const tooltip = (n) =>
   `<div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:6px 10px;font:14px Inter,sans-serif;color:#e2e8f0">${n.isBrand ? `<b>${esc(n.label)}</b> (official)` : `<b>${esc(n.label)}</b><br/>Risk score: ${esc(n.score)}`}</div>`;
 
+const MODES = [['3d', '3D', Box], ['2d', '2D', Square]];
+
+function ModeToggle({ mode, onChange }) {
+  return (
+    <div className="flex rounded-lg border border-slate-700 p-1">
+      {MODES.map(([m, label, Icon]) => (
+        <button key={m} data-testid={`graph-toggle-${m}`} onClick={() => onChange(m)} className={clsx('flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors', mode === m ? 'bg-teal-500/20 text-teal-200' : 'text-slate-400 hover:text-white')}>
+          <Icon className="h-4 w-4" /> {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function Legend() {
+  return (
+    <div className="pointer-events-none absolute bottom-3 left-3 flex flex-wrap gap-3 rounded-lg bg-slate-950/80 px-3 py-2 text-xs text-slate-300">
+      <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-teal-400" />Official</span>
+      {['high', 'medium', 'low'].map((k) => <span key={k} className="flex items-center gap-1.5 capitalize"><span className={`h-2.5 w-2.5 rounded-full ${BAND_STYLES[k].bar}`} />{k}</span>)}
+      <span className="flex items-center gap-1.5"><span className="h-0.5 w-4 bg-red-400" />Shared link / phone / username</span>
+    </div>
+  );
+}
+
 export default function ThreatNetwork() {
   const { data, openProfile } = useApp();
   const [mode, setMode] = useState('3d');
@@ -56,23 +80,13 @@ export default function ThreatNetwork() {
           <h2 className="text-lg font-semibold text-white">Threat network</h2>
           <p className="text-sm text-slate-400">{graph.nodes.length - 1} suspects, {shared} shared-infrastructure links. Drag to rotate, click a node to investigate.</p>
         </div>
-        <div className="flex rounded-lg border border-slate-700 p-1">
-          {[['3d', '3D', Box], ['2d', '2D', Square]].map(([m, label, Icon]) => (
-            <button key={m} data-testid={`graph-toggle-${m}`} onClick={() => setMode(m)} className={clsx('flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors', mode === m ? 'bg-teal-500/20 text-teal-200' : 'text-slate-400 hover:text-white')}>
-              <Icon className="h-4 w-4" /> {label}
-            </button>
-          ))}
-        </div>
+        <ModeToggle mode={mode} onChange={setMode} />
       </div>
       <div ref={box} data-testid="threat-graph" className="relative overflow-hidden rounded-lg border border-slate-800" style={{ height: HEIGHT }}>
         {width > 0 && (mode === '3d'
           ? <Graph3D {...common} showNavInfo={false} nodeOpacity={0.95} nodeResolution={16} linkDirectionalParticles={(l) => (l.kind === 'shared' ? 2 : 0)} linkDirectionalParticleColor={() => '#fca5a5'} />
           : <Graph2D {...common} nodeRelSize={2.5} linkDirectionalParticles={(l) => (l.kind === 'shared' ? 2 : 0)} />)}
-        <div className="pointer-events-none absolute bottom-3 left-3 flex flex-wrap gap-3 rounded-lg bg-slate-950/80 px-3 py-2 text-xs text-slate-300">
-          <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-teal-400" />Official</span>
-          {['high', 'medium', 'low'].map((k) => <span key={k} className="flex items-center gap-1.5 capitalize"><span className={`h-2.5 w-2.5 rounded-full ${BAND_STYLES[k].bar}`} />{k}</span>)}
-          <span className="flex items-center gap-1.5"><span className="h-0.5 w-4 bg-red-400" />Shared link / phone / username</span>
-        </div>
+        <Legend />
       </div>
     </Card>
   );

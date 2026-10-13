@@ -50,101 +50,126 @@ function Compare({ brand, p }) {
   );
 }
 
+function DrawerHeader({ p, isReported, onClose }) {
+  return (
+    <div className="flex items-start gap-4 border-b border-slate-800 p-6">
+      <Avatar name={p.displayName} size="h-14 w-14 text-lg" />
+      <div className="min-w-0 flex-1">
+        <h2 className="flex flex-wrap items-center gap-2 text-2xl font-bold text-white">
+          @{p.handle}
+          {isReported && <span data-testid="drawer-reported-badge" className="rounded-full bg-slate-700 px-2.5 py-0.5 text-sm font-medium text-slate-200">Reported</span>}
+        </h2>
+        <p className="mt-1 flex items-center gap-2 text-sm text-slate-400"><PlatformIcon platform={p.platform} /> {p.platform} · {p.displayName}</p>
+      </div>
+      <button data-testid="drawer-close-btn" onClick={onClose} className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"><X className="h-5 w-5" /></button>
+    </div>
+  );
+}
+
+function ScoreExplainer() {
+  return (
+    <Popover testId="score-explainer" trigger={<><HelpCircle className="h-4 w-4" /> How is this score calculated?</>}>
+      <p className="mb-3 text-sm text-slate-300">Score = sum of signal points (0-100). Verified accounts score 0. 70+ High, 40-69 Medium, below 40 Low.</p>
+      <ul className="space-y-2.5">
+        {WEIGHTS.map((w) => (
+          <li key={w.name} className="text-sm">
+            <span className="font-semibold text-white">{w.name}</span> <span className="text-teal-300">max {w.max}</span>
+            <p className="text-slate-400">{w.rule}</p>
+          </li>
+        ))}
+      </ul>
+    </Popover>
+  );
+}
+
+function Section({ title, children }) {
+  return (
+    <section>
+      <h3 className="mb-3 text-lg font-semibold text-white">{title}</h3>
+      {children}
+    </section>
+  );
+}
+
+function SignalList({ signals }) {
+  return (
+    <ul data-testid="signal-breakdown" className="space-y-2">
+      {signals.map((s) => (
+        <li key={s.name} className={clsx('flex items-start gap-4 rounded-lg border px-4 py-3', s.points ? 'border-slate-700 bg-slate-900' : 'border-slate-800/60 bg-transparent opacity-60')}>
+          <span className={clsx('w-12 shrink-0 text-right text-lg font-bold tabular-nums', s.points ? 'text-red-300' : 'text-slate-500')}>+{s.points}</span>
+          <div>
+            <p className="font-semibold text-white">{s.name}</p>
+            <p className="text-sm text-slate-400">{s.reason}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function LinkedMessages({ messages, onSend }) {
+  if (!messages.length) return <p className="text-sm text-slate-500">No scam messages linked to this profile.</p>;
+  return (
+    <ul className="space-y-2">
+      {messages.map((m) => (
+        <li key={m.id} data-testid={`linked-message-${m.id}`} className="rounded-lg border border-slate-800 bg-slate-900 p-4">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <span className={clsx('inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1', m.analysis.isScam ? 'bg-red-500/15 text-red-300 ring-red-500/30' : 'bg-emerald-500/15 text-emerald-300 ring-emerald-500/30')}>{m.analysis.type}</span>
+            <button data-testid={`send-to-analyzer-${m.id}`} onClick={() => onSend(m.text)} className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium text-teal-300 transition-colors hover:bg-teal-500/10 hover:text-teal-200">
+              <ScanSearch className="h-4 w-4" /> Send to Analyzer
+            </button>
+          </div>
+          <p className="text-sm text-slate-300">{m.text}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function DrawerActions({ p, isReported, onReport }) {
+  return (
+    <div className="flex flex-wrap gap-3 border-t border-slate-800 p-5">
+      <Button data-testid="mark-reported-btn" disabled={isReported} onClick={() => { onReport(p.id); toast.success(`@${p.handle} marked as reported`); }}>
+        <Flag className="h-4 w-4" /> {isReported ? 'Reported' : 'Mark as reported'}
+      </Button>
+      <Button data-testid="generate-report-btn" variant="ghost" onClick={() => toast('Report generation coming in the next step')}>
+        <FileText className="h-4 w-4" /> Generate Evidence Report
+      </Button>
+      <div className="ml-auto self-center"><RiskBadge band={p.risk.band} score={p.risk.score} /></div>
+    </div>
+  );
+}
+
 export default function ProfileDrawer() {
   const { data, selectedId, closeProfile, reported, markReported, sendToAnalyzer } = useApp();
   const p = data?.profiles.find((x) => x.id === selectedId);
 
   useEffect(() => {
-    const esc = (e) => e.key === 'Escape' && closeProfile();
-    window.addEventListener('keydown', esc);
-    return () => window.removeEventListener('keydown', esc);
+    const onKey = (e) => e.key === 'Escape' && closeProfile();
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, [closeProfile]);
 
   if (!p) return null;
-  const linked = data.messages.filter((m) => m.linkedProfileId === p.id);
   const isReported = reported[p.id];
 
   return (
     <div className="fixed inset-0 z-40">
       <div className="absolute inset-0 animate-fade-in bg-black/60" onClick={closeProfile} data-testid="drawer-backdrop" />
       <aside data-testid="profile-drawer" className="absolute inset-y-0 right-0 flex w-full max-w-2xl animate-slide-in flex-col border-l border-slate-800 bg-slate-950 shadow-2xl">
-        <div className="flex items-start gap-4 border-b border-slate-800 p-6">
-          <Avatar name={p.displayName} size="h-14 w-14 text-lg" />
-          <div className="min-w-0 flex-1">
-            <h2 className="flex flex-wrap items-center gap-2 text-2xl font-bold text-white">
-              @{p.handle}
-              {isReported && <span data-testid="drawer-reported-badge" className="rounded-full bg-slate-700 px-2.5 py-0.5 text-sm font-medium text-slate-200">Reported</span>}
-            </h2>
-            <p className="mt-1 flex items-center gap-2 text-sm text-slate-400"><PlatformIcon platform={p.platform} /> {p.platform} · {p.displayName}</p>
-          </div>
-          <button data-testid="drawer-close-btn" onClick={closeProfile} className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"><X className="h-5 w-5" /></button>
-        </div>
-
+        <DrawerHeader p={p} isReported={isReported} onClose={closeProfile} />
         <div className="flex-1 space-y-7 overflow-y-auto p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <Gauge score={p.risk.score} band={p.risk.band} />
-            <Popover testId="score-explainer" trigger={<><HelpCircle className="h-4 w-4" /> How is this score calculated?</>}>
-              <p className="mb-3 text-sm text-slate-300">Score = sum of signal points (0-100). Verified accounts score 0. 70+ High, 40-69 Medium, below 40 Low.</p>
-              <ul className="space-y-2.5">
-                {WEIGHTS.map((w) => (
-                  <li key={w.name} className="text-sm">
-                    <span className="font-semibold text-white">{w.name}</span> <span className="text-teal-300">max {w.max}</span>
-                    <p className="text-slate-400">{w.rule}</p>
-                  </li>
-                ))}
-              </ul>
-            </Popover>
+            <ScoreExplainer />
           </div>
-
-          <section>
-            <h3 className="mb-3 text-lg font-semibold text-white">Official vs Suspected</h3>
-            <Compare brand={data.brand} p={p} />
-          </section>
-
-          <section>
-            <h3 className="mb-3 text-lg font-semibold text-white">Signal breakdown</h3>
-            <ul data-testid="signal-breakdown" className="space-y-2">
-              {p.risk.signals.map((s) => (
-                <li key={s.name} className={clsx('flex items-start gap-4 rounded-lg border px-4 py-3', s.points ? 'border-slate-700 bg-slate-900' : 'border-slate-800/60 bg-transparent opacity-60')}>
-                  <span className={clsx('w-12 shrink-0 text-right text-lg font-bold tabular-nums', s.points ? 'text-red-300' : 'text-slate-500')}>+{s.points}</span>
-                  <div>
-                    <p className="font-semibold text-white">{s.name}</p>
-                    <p className="text-sm text-slate-400">{s.reason}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section>
-            <h3 className="mb-3 text-lg font-semibold text-white">Linked scam messages</h3>
-            {linked.length ? (
-              <ul className="space-y-2">
-                {linked.map((m) => (
-                  <li key={m.id} data-testid={`linked-message-${m.id}`} className="rounded-lg border border-slate-800 bg-slate-900 p-4">
-                    <div className="mb-2 flex items-center justify-between gap-3">
-                      <span className={clsx('inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1', m.analysis.isScam ? 'bg-red-500/15 text-red-300 ring-red-500/30' : 'bg-emerald-500/15 text-emerald-300 ring-emerald-500/30')}>{m.analysis.type}</span>
-                      <button data-testid={`send-to-analyzer-${m.id}`} onClick={() => sendToAnalyzer(m.text)} className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium text-teal-300 transition-colors hover:bg-teal-500/10 hover:text-teal-200">
-                        <ScanSearch className="h-4 w-4" /> Send to Analyzer
-                      </button>
-                    </div>
-                    <p className="text-sm text-slate-300">{m.text}</p>
-                  </li>
-                ))}
-              </ul>
-            ) : <p className="text-sm text-slate-500">No scam messages linked to this profile.</p>}
-          </section>
+          <Section title="Official vs Suspected"><Compare brand={data.brand} p={p} /></Section>
+          <Section title="Signal breakdown"><SignalList signals={p.risk.signals} /></Section>
+          <Section title="Linked scam messages">
+            <LinkedMessages messages={data.messages.filter((m) => m.linkedProfileId === p.id)} onSend={sendToAnalyzer} />
+          </Section>
         </div>
-
-        <div className="flex flex-wrap gap-3 border-t border-slate-800 p-5">
-          <Button data-testid="mark-reported-btn" disabled={isReported} onClick={() => { markReported(p.id); toast.success(`@${p.handle} marked as reported`); }}>
-            <Flag className="h-4 w-4" /> {isReported ? 'Reported' : 'Mark as reported'}
-          </Button>
-          <Button data-testid="generate-report-btn" variant="ghost" onClick={() => toast('Report generation coming in the next step')}>
-            <FileText className="h-4 w-4" /> Generate Evidence Report
-          </Button>
-          <div className="ml-auto self-center"><RiskBadge band={p.risk.band} score={p.risk.score} /></div>
-        </div>
+        <DrawerActions p={p} isReported={isReported} onReport={markReported} />
       </aside>
     </div>
   );

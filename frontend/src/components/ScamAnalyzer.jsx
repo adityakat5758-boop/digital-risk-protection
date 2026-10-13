@@ -1,22 +1,31 @@
 'use client';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { AlertOctagon, CheckCircle2, Languages, Link2, Phone, Sparkles, Wallet } from 'lucide-react';
 import { useApp } from './AppContext';
 import { Button, Card, PageHeader } from './common';
 import { analyzeMessage, keywordRegex, MAX_MESSAGE_LENGTH } from '@/lib/scamAnalyzer';
 
-function Highlighted({ text, keywords }) {
-  if (!keywords.length) return text;
+// Splits text into plain and keyword segments, each keyed by its character offset.
+function segment(text, keywords) {
+  if (!keywords.length) return [{ start: 0, text, hit: false }];
   const re = new RegExp(keywords.map((k) => keywordRegex(k).source).join('|'), 'gi');
   const parts = [];
   let last = 0;
   for (const m of text.matchAll(re)) {
-    parts.push(text.slice(last, m.index), <mark key={m.index} className="rounded bg-amber-400/25 px-0.5 text-amber-100">{m[0]}</mark>);
+    parts.push({ start: last, text: text.slice(last, m.index), hit: false }, { start: m.index, text: m[0], hit: true });
     last = m.index + m[0].length;
   }
-  parts.push(text.slice(last));
-  return parts.map((p, i) => <Fragment key={i}>{p}</Fragment>);
+  parts.push({ start: last, text: text.slice(last), hit: false });
+  return parts.filter((p) => p.text);
+}
+
+function Highlighted({ text, keywords }) {
+  return segment(text, keywords).map((p) =>
+    p.hit
+      ? <mark key={`m${p.start}`} className="rounded bg-amber-400/25 px-0.5 text-amber-100">{p.text}</mark>
+      : <Fragment key={`t${p.start}`}>{p.text}</Fragment>
+  );
 }
 
 function Chip({ icon: Icon, children, testId }) {
@@ -65,77 +74,101 @@ function Result({ r, text }) {
   );
 }
 
+function MessageInput({ text, onChange, onAnalyze, loading }) {
+  return (
+    <Card className="p-5">
+      <textarea
+        data-testid="scam-textarea"
+        value={text}
+        maxLength={MAX_MESSAGE_LENGTH}
+        onChange={(e) => onChange(e.target.value)}
+        rows={7}
+        placeholder="e.g. Badhai ho! Aap lucky draw ke winner hain..."
+        className="w-full resize-none rounded-lg border border-slate-700 bg-slate-950 p-4 text-base text-white placeholder:text-slate-600 transition-colors focus:border-teal-500 focus:outline-none"
+      />
+      <Button data-testid="analyze-btn" className="mt-4 w-full py-3 text-base" disabled={!text.trim() || loading} onClick={onAnalyze}>
+        {loading ? 'Analyzing...' : 'Analyze message'}
+      </Button>
+    </Card>
+  );
+}
+
+function SampleChips({ messages, onPick }) {
+  if (!messages.length) return null;
+  return (
+    <>
+      <p className="mb-3 mt-6 text-sm font-medium text-slate-400">Load sample</p>
+      <div className="flex flex-wrap gap-2">
+        {messages.map((m, i) => (
+          <button
+            key={m.id}
+            data-testid={`sample-chip-${i + 1}`}
+            title={m.text}
+            onClick={() => onPick(m.text)}
+            className="max-w-[230px] truncate rounded-full border border-slate-700 bg-slate-900 px-3.5 py-1.5 text-sm text-slate-300 transition-colors hover:border-teal-500/50 hover:text-white"
+          >
+            #{i + 1} {m.text.replace(/[^\w\s!']/g, '').trim().slice(0, 26)}…
+          </button>
+        ))}
+      </div>
+    </>
+  );
+}
+
+const SKELETON_WIDTHS = [40, 100, 90, 70];
+
+function ResultPanel({ loading, result }) {
+  if (loading) {
+    return (
+      <Card data-testid="scam-loading" className="space-y-4 p-6">
+        {SKELETON_WIDTHS.map((w) => <div key={w} className="h-5 animate-pulse rounded bg-slate-800" style={{ width: `${w}%` }} />)}
+      </Card>
+    );
+  }
+  if (result) return <Result r={result.r} text={result.text} />;
+  return (
+    <Card data-testid="scam-empty" className="flex h-full min-h-[260px] flex-col items-center justify-center gap-3 border-dashed p-6 text-center text-slate-500">
+      <AlertOctagon className="h-8 w-8" />
+      <p className="text-base">Paste a message or load a sample, then click Analyze.</p>
+    </Card>
+  );
+}
+
 export default function ScamAnalyzer() {
   const { data, recordAnalysis, prefill, clearPrefill } = useApp();
   const [text, setText] = useState(prefill || '');
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const officialDomains = data?.brand.officialDomains;
 
-  const analyze = async (input = text) => {
+  const analyze = useCallback(async (input) => {
     setLoading(true);
     setResult(null);
-    const r = await analyzeMessage(input, data ? { officialDomains: data.brand.officialDomains } : undefined);
+    const r = await analyzeMessage(input, officialDomains ? { officialDomains } : undefined);
     setResult({ r, text: input });
     setLoading(false);
     recordAnalysis();
-  };
+  }, [officialDomains, recordAnalysis]);
 
+  // Auto-run once when a message was sent here from another screen.
   const started = useRef(false);
   useEffect(() => {
     if (!prefill || started.current) return;
     started.current = true;
     clearPrefill();
     analyze(prefill);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [prefill, clearPrefill, analyze]);
 
   return (
     <div>
       <PageHeader title="Scam Analyzer" subtitle="Paste a suspicious message. Understands English and Hinglish." />
       <div className="grid gap-6 lg:grid-cols-[1fr_1.1fr]">
         <div>
-          <Card className="p-5">
-            <textarea
-              data-testid="scam-textarea"
-              value={text}
-              maxLength={MAX_MESSAGE_LENGTH}
-              onChange={(e) => setText(e.target.value)}
-              rows={7}
-              placeholder="e.g. Badhai ho! Aap lucky draw ke winner hain..."
-              className="w-full resize-none rounded-lg border border-slate-700 bg-slate-950 p-4 text-base text-white placeholder:text-slate-600 transition-colors focus:border-teal-500 focus:outline-none"
-            />
-            <Button data-testid="analyze-btn" className="mt-4 w-full py-3 text-base" disabled={!text.trim() || loading} onClick={() => analyze()}>
-              {loading ? 'Analyzing...' : 'Analyze message'}
-            </Button>
-          </Card>
-          {data && <p className="mb-3 mt-6 text-sm font-medium text-slate-400">Load sample</p>}
-          <div className="flex flex-wrap gap-2">
-            {(data?.messages ?? []).map((m, i) => (
-              <button
-                key={m.id}
-                data-testid={`sample-chip-${i + 1}`}
-                title={m.text}
-                onClick={() => { setText(m.text); setResult(null); }}
-                className="max-w-[230px] truncate rounded-full border border-slate-700 bg-slate-900 px-3.5 py-1.5 text-sm text-slate-300 transition-colors hover:border-teal-500/50 hover:text-white"
-              >
-                #{i + 1} {m.text.replace(/[^\w\s!']/g, '').trim().slice(0, 26)}…
-              </button>
-            ))}
-          </div>
+          <MessageInput text={text} onChange={setText} onAnalyze={() => analyze(text)} loading={loading} />
+          <SampleChips messages={data?.messages ?? []} onPick={(t) => { setText(t); setResult(null); }} />
         </div>
-
         <div>
-          {loading && (
-            <Card data-testid="scam-loading" className="space-y-4 p-6">
-              {[40, 100, 90, 70].map((w, i) => <div key={i} className="h-5 animate-pulse rounded bg-slate-800" style={{ width: `${w}%` }} />)}
-            </Card>
-          )}
-          {!loading && result && <Result r={result.r} text={result.text} />}
-          {!loading && !result && (
-            <Card data-testid="scam-empty" className="flex h-full min-h-[260px] flex-col items-center justify-center gap-3 border-dashed p-6 text-center text-slate-500">
-              <AlertOctagon className="h-8 w-8" />
-              <p className="text-base">Paste a message or load a sample, then click Analyze.</p>
-            </Card>
-          )}
+          <ResultPanel loading={loading} result={result} />
         </div>
       </div>
     </div>

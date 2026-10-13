@@ -38,44 +38,76 @@ export function extractEntities(text) {
 
 export const MAX_MESSAGE_LENGTH = 2000;
 
-// Synchronous core: keyword hits per category + boosters -> type and confidence.
-export function analyzeText(rawText, { officialDomains = DEFAULT_OFFICIAL } = {}) {
-  const text = String(rawText).slice(0, MAX_MESSAGE_LENGTH);
-  const hitsByCategory = Object.fromEntries(
+const SAFE_TYPE = 'No scam indicators found';
+
+// Distinct keyword hits per scam category.
+function categoryHits(text) {
+  return Object.fromEntries(
     Object.entries(CATEGORIES).map(([cat, kws]) => [cat, kws.filter((kw) => keywordRegex(kw).test(text))])
   );
-  const keywords = [...new Set(Object.values(hitsByCategory).flat())];
-  const totalHits = Object.values(hitsByCategory).reduce((s, k) => s + k.length, 0);
+}
 
-  const entities = extractEntities(text);
-  const badLinks = entities.links.filter((l) => !officialDomains.some((d) => getDomain(l) === d || getDomain(l).endsWith('.' + d)));
-  const urgency = URGENCY.filter((u) => keywordRegex(u).test(text));
-  const boosters = [
+const isOfficialLink = (link, officialDomains) => {
+  const domain = getDomain(link);
+  return officialDomains.some((d) => domain === d || domain.endsWith('.' + d));
+};
+
+// Extra risk signals that raise confidence.
+function findBoosters(text, entities, badLinks, urgency) {
+  return [
     badLinks.length && 'a non-official link',
     entities.phones.length && 'a phone number',
     entities.upis.length && 'a UPI ID',
     urgency.length && 'urgency pressure',
     MONEY_RE.test(text) && 'a request for money, OTP or an app install',
   ].filter(Boolean);
+}
 
-  const words = (text.toLowerCase().match(/[a-z]+/g) || []);
-  const language = words.filter((w) => HINGLISH.includes(w)).length >= 2 ? 'Hinglish' : 'English';
-  const base = { keywords: [...keywords, ...urgency], entities, badLinks, boosters, language, hitsByCategory, source: 'Rule-based' };
+function detectLanguage(text) {
+  const words = text.toLowerCase().match(/[a-z]+/g) || [];
+  return words.filter((w) => HINGLISH.includes(w)).length >= 2 ? 'Hinglish' : 'English';
+}
 
-  if (SAFE_RE.test(text) && !badLinks.length && !entities.phones.length && !entities.upis.length) {
-    return { ...base, isScam: false, type: 'No scam indicators found', confidence: 0, explanation: 'Contains safety guidance (e.g. "never ask for OTP", "applying is free") and no risky links, phone numbers or UPI IDs.' };
-  }
+// Returns an explanation if the message should be treated as safe, else null.
+function safeReason(text, totalHits, base) {
+  const noRiskyEntities = !base.badLinks.length && !base.entities.phones.length && !base.entities.upis.length;
+  if (SAFE_RE.test(text) && noRiskyEntities) return 'Contains safety guidance (e.g. "never ask for OTP", "applying is free") and no risky links, phone numbers or UPI IDs.';
+  if (totalHits === 0 && base.boosters.length === 0) return 'No scam keywords, suspicious links, phone numbers, UPI IDs or payment requests were found.';
+  return null;
+}
 
-  if (totalHits === 0 && boosters.length === 0) {
-    return { ...base, isScam: false, type: 'No scam indicators found', confidence: 0, explanation: 'No scam keywords, suspicious links, phone numbers, UPI IDs or payment requests were found.' };
-  }
-
+// Category with the most hits; falls back to a generic label when only boosters fired.
+function topCategory(hitsByCategory) {
   const [type, top] = Object.entries(hitsByCategory).sort((a, b) => b[1].length - a[1].length)[0];
-  const resolvedType = top.length ? type : 'Suspicious Message';
-  const confidence = Math.min(95, 50 + 10 * totalHits + 5 * boosters.length);
+  return top.length ? type : 'Suspicious Message';
+}
+
+function explain(type, keywords, boosters) {
   const kwText = keywords.slice(0, 4).map((k) => `"${k}"`).join(', ');
-  const explanation = `Classified as ${resolvedType} because it ${kwText ? `uses ${kwText}` : 'shows scam patterns'}${boosters.length ? ` and contains ${boosters.join(', ')}` : ''}.`;
-  return { ...base, isScam: true, type: resolvedType, confidence, explanation };
+  const uses = kwText ? `uses ${kwText}` : 'shows scam patterns';
+  const contains = boosters.length ? ` and contains ${boosters.join(', ')}` : '';
+  return `Classified as ${type} because it ${uses}${contains}.`;
+}
+
+// Synchronous core: keyword hits per category + boosters -> type and confidence.
+export function analyzeText(rawText, { officialDomains = DEFAULT_OFFICIAL } = {}) {
+  const text = String(rawText).slice(0, MAX_MESSAGE_LENGTH);
+  const hitsByCategory = categoryHits(text);
+  const keywords = [...new Set(Object.values(hitsByCategory).flat())];
+  const totalHits = Object.values(hitsByCategory).reduce((s, k) => s + k.length, 0);
+
+  const entities = extractEntities(text);
+  const badLinks = entities.links.filter((l) => !isOfficialLink(l, officialDomains));
+  const urgency = URGENCY.filter((u) => keywordRegex(u).test(text));
+  const boosters = findBoosters(text, entities, badLinks, urgency);
+  const base = { keywords: [...keywords, ...urgency], entities, badLinks, boosters, language: detectLanguage(text), hitsByCategory, source: 'Rule-based' };
+
+  const safe = safeReason(text, totalHits, base);
+  if (safe) return { ...base, isScam: false, type: SAFE_TYPE, confidence: 0, explanation: safe };
+
+  const type = topCategory(hitsByCategory);
+  const confidence = Math.min(95, 50 + 10 * totalHits + 5 * boosters.length);
+  return { ...base, isScam: true, type, confidence, explanation: explain(type, keywords, boosters) };
 }
 
 // Async entry point used by the UI; implementation can be swapped without touching the UI.

@@ -46,10 +46,18 @@ export function BrandSearch({ compact = false }) {
           <Info className="h-4 w-4" /> Demo dataset covers {SUPPORTED_BRANDS.join(', ')}
         </p>
       )}
+      <ExampleChips onBrand={(b) => { setQuery(b); run(b); }} onLink={openAnalyzerWith} />
+    </div>
+  );
+}
+
+function ExampleChips({ onBrand, onLink }) {
+  return (
+    <>
       <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-400">
         <span>Try:</span>
         {EXAMPLE_BRANDS.map((b) => (
-          <button key={b} data-testid={`example-chip-${b.toLowerCase()}`} onClick={() => { setQuery(b); run(b); }} className={CHIP}>
+          <button key={b} data-testid={`example-chip-${b.toLowerCase()}`} onClick={() => onBrand(b)} className={CHIP}>
             {b}
           </button>
         ))}
@@ -57,12 +65,12 @@ export function BrandSearch({ compact = false }) {
       <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-400">
         <span>Try a suspicious link:</span>
         {EXAMPLE_LINKS.map(({ id, link, text }) => (
-          <button key={id} data-testid={`example-link-chip-${id}`} onClick={() => openAnalyzerWith(text)} className={`${CHIP} inline-flex items-center gap-1.5`}>
+          <button key={id} data-testid={`example-link-chip-${id}`} onClick={() => onLink(text)} className={`${CHIP} inline-flex items-center gap-1.5`}>
             <Link2 className="h-3.5 w-3.5" /> {link}
           </button>
         ))}
       </div>
-    </div>
+    </>
   );
 }
 
