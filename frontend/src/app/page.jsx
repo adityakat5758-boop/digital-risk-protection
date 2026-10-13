@@ -1,4 +1,5 @@
 'use client';
+import { useEffect, useState } from 'react';
 import { AppProvider, useApp } from '@/components/AppContext';
 import Landing from '@/components/Landing';
 import Scanning from '@/components/Scanning';
@@ -8,12 +9,18 @@ import Profiles from '@/components/Profiles';
 import ProfileDrawer from '@/components/ProfileDrawer';
 import ScamAnalyzer from '@/components/ScamAnalyzer';
 import AppChecker from '@/components/AppChecker';
-import { Footer } from '@/components/common';
+import { Footer, PageSkeleton } from '@/components/common';
 
 const VIEWS = { dashboard: Dashboard, profiles: Profiles, scam: ScamAnalyzer, apps: AppChecker };
 
 function Shell() {
   const { status, view, data } = useApp();
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setLoading(true);
+    const t = setTimeout(() => setLoading(false), 450);
+    return () => clearTimeout(t);
+  }, [view, status]);
   if (status === 'idle') return <Landing />;
   const View = VIEWS[view];
   return (
@@ -21,7 +28,7 @@ function Shell() {
       <Sidebar />
       <main className="flex min-h-screen flex-1 flex-col md:ml-64">
         <div key={view} className="mx-auto w-full max-w-7xl flex-1 animate-fade-up px-5 py-8 md:px-10">
-          {data && <View />}
+          {data && (loading ? <PageSkeleton /> : <View />)}
         </div>
         <Footer />
       </main>

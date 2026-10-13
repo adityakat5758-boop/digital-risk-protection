@@ -1,16 +1,17 @@
 'use client';
 import { AlertTriangle, AppWindow, ChevronRight, MessageSquareWarning, RefreshCw, Users } from 'lucide-react';
 import { useApp } from './AppContext';
-import { Avatar, BAND_STYLES, Button, Card, PageHeader, PlatformIcon, RiskBadge } from './common';
+import { Avatar, BAND_STYLES, Button, Card, CountUp, PageHeader, PlatformIcon, RiskBadge } from './common';
+import ThreatNetwork from './ThreatNetwork';
 import { topSignal } from '@/lib/riskEngine';
 
 function Stat({ icon: Icon, label, value, sub, testId, accent = 'text-teal-300', delay }) {
   return (
-    <Card className="animate-fade-up p-5" style={{ animationDelay: delay }}>
+    <Card className="animate-fade-up p-5 hover:-translate-y-1" style={{ animationDelay: delay }}>
       <div className="flex items-center justify-between text-sm text-slate-400">
         {label} <Icon className={`h-5 w-5 ${accent}`} />
       </div>
-      <p data-testid={testId} className="mt-3 text-4xl font-bold tabular-nums text-white">{value}</p>
+      <p data-testid={testId} className="mt-3 text-4xl font-bold tabular-nums text-white"><CountUp value={value} /></p>
       <p className="mt-1 text-sm text-slate-500">{sub}</p>
     </Card>
   );
@@ -101,6 +102,8 @@ export default function Dashboard() {
         <RiskDonut profiles={profiles} />
         <PlatformBars profiles={profiles} />
       </div>
+
+      <ThreatNetwork />
 
       <Card className="mt-6 p-6">
         <h2 className="text-lg font-semibold text-white">Top threats</h2>

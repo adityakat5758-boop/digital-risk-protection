@@ -4,16 +4,17 @@ import clsx from 'clsx';
 import { toast } from 'sonner';
 import { BadgeCheck, Flag, FileText, HelpCircle, X } from 'lucide-react';
 import { useApp } from './AppContext';
-import { Avatar, BAND_STYLES, Button, PlatformIcon, Popover, RiskBadge, fmt, fmtAge } from './common';
+import { Avatar, BAND_STYLES, Button, PlatformIcon, Popover, RiskBadge, fmt, fmtAge, useCountUp } from './common';
 import { WEIGHTS } from '@/lib/riskEngine';
 
-function Gauge({ score, band }) {
+function Gauge({ score: target, band }) {
+  const score = useCountUp(target);
   const len = Math.PI * 80;
   return (
     <div className="relative h-28 w-48">
       <svg viewBox="0 0 200 110" className="h-full w-full">
         <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#1e293b" strokeWidth="16" strokeLinecap="round" />
-        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke={BAND_STYLES[band.key].hex} strokeWidth="16" strokeLinecap="round" strokeDasharray={`${(len * score) / 100} ${len}`} className="transition-[stroke-dasharray] duration-700" />
+        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke={BAND_STYLES[band.key].hex} strokeWidth="16" strokeLinecap="round" strokeDasharray={`${(len * score) / 100} ${len}`} />
       </svg>
       <div className="absolute inset-x-0 bottom-0 text-center">
         <p data-testid="drawer-score" className="text-4xl font-bold tabular-nums text-white">{score}</p>

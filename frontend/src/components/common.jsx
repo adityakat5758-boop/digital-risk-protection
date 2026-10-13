@@ -9,10 +9,29 @@ export const BAND_STYLES = {
   low: { badge: 'bg-emerald-500/15 text-emerald-300 ring-emerald-500/40', bar: 'bg-emerald-500', hex: '#10b981', text: 'text-emerald-400' },
 };
 
+// Animates a number from 0 to `value` with an ease-out curve.
+export function useCountUp(value, duration = 900) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    let raf;
+    const start = performance.now();
+    const tick = (t) => {
+      const p = Math.min(1, (t - start) / duration);
+      setN(Math.round(value * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [value, duration]);
+  return n;
+}
+
+export const CountUp = ({ value }) => <>{useCountUp(value)}</>;
+
 export function RiskBadge({ band, score, testId }) {
   return (
     <span data-testid={testId} className={clsx('inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-sm font-semibold ring-1', BAND_STYLES[band.key].badge)}>
-      {score !== undefined && <span className="tabular-nums">{score}</span>}
+      {score !== undefined && <span className="tabular-nums"><CountUp value={score} /></span>}
       <span>{band.label}</span>
     </span>
   );
@@ -32,7 +51,19 @@ export function Avatar({ name, size = 'h-10 w-10 text-sm' }) {
 }
 
 export function Card({ className, children, ...props }) {
-  return <div className={clsx('rounded-xl border border-slate-800 bg-slate-900/80', className)} {...props}>{children}</div>;
+  return <div className={clsx('rounded-xl border border-slate-800 bg-slate-900/80 shadow-lg shadow-black/20 transition-[border-color,box-shadow,transform] duration-300 hover:border-slate-700 hover:shadow-teal-950/30', className)} {...props}>{children}</div>;
+}
+
+export function PageSkeleton() {
+  return (
+    <div data-testid="page-skeleton" className="space-y-6">
+      <div className="h-9 w-72 animate-pulse rounded-lg bg-slate-800" />
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {[0, 1, 2, 3].map((i) => <div key={i} className="h-32 animate-pulse rounded-xl bg-slate-900" />)}
+      </div>
+      <div className="h-80 animate-pulse rounded-xl bg-slate-900" />
+    </div>
+  );
 }
 
 export function PageHeader({ title, subtitle, children }) {
