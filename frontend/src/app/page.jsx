@@ -15,12 +15,13 @@ const VIEWS = { dashboard: Dashboard, profiles: Profiles, scam: ScamAnalyzer, ap
 
 function Shell() {
   const { status, view, data } = useApp();
-  const [loading, setLoading] = useState(true);
+  const key = `${view}-${status}`;
+  const [shown, setShown] = useState(null);
   useEffect(() => {
-    setLoading(true);
-    const t = setTimeout(() => setLoading(false), 450);
+    const t = setTimeout(() => setShown(key), 450);
     return () => clearTimeout(t);
-  }, [view, status]);
+  }, [key]);
+  const loading = shown !== key;
   if (status === 'idle') return <Landing />;
   const View = VIEWS[view];
   return (

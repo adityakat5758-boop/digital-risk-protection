@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import clsx from 'clsx';
 import { toast } from 'sonner';
-import { BadgeCheck, Flag, FileText, HelpCircle, X } from 'lucide-react';
+import { BadgeCheck, Flag, FileText, HelpCircle, ScanSearch, X } from 'lucide-react';
 import { useApp } from './AppContext';
 import { Avatar, BAND_STYLES, Button, PlatformIcon, Popover, RiskBadge, fmt, fmtAge, useCountUp } from './common';
 import { WEIGHTS } from '@/lib/riskEngine';
@@ -51,7 +51,7 @@ function Compare({ brand, p }) {
 }
 
 export default function ProfileDrawer() {
-  const { data, selectedId, closeProfile, reported, markReported } = useApp();
+  const { data, selectedId, closeProfile, reported, markReported, sendToAnalyzer } = useApp();
   const p = data?.profiles.find((x) => x.id === selectedId);
 
   useEffect(() => {
@@ -122,7 +122,12 @@ export default function ProfileDrawer() {
               <ul className="space-y-2">
                 {linked.map((m) => (
                   <li key={m.id} data-testid={`linked-message-${m.id}`} className="rounded-lg border border-slate-800 bg-slate-900 p-4">
-                    <span className="mb-2 inline-block rounded-full bg-red-500/15 px-2.5 py-0.5 text-xs font-semibold text-red-300 ring-1 ring-red-500/30">{m.analysis.type}</span>
+                    <div className="mb-2 flex items-center justify-between gap-3">
+                      <span className="inline-block rounded-full bg-red-500/15 px-2.5 py-0.5 text-xs font-semibold text-red-300 ring-1 ring-red-500/30">{m.analysis.type}</span>
+                      <button data-testid={`send-to-analyzer-${m.id}`} onClick={() => sendToAnalyzer(m.text)} className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium text-teal-300 transition-colors hover:bg-teal-500/10 hover:text-teal-200">
+                        <ScanSearch className="h-4 w-4" /> Open in Scam Analyzer
+                      </button>
+                    </div>
                     <p className="text-sm text-slate-300">{m.text}</p>
                   </li>
                 ))}

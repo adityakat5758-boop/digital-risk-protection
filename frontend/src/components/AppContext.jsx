@@ -27,6 +27,7 @@ export function AppProvider({ children }) {
   const [reported, setReported] = useState({});
   const [selectedId, setSelectedId] = useState(null);
   const [analyzedCount, setAnalyzedCount] = useState(0);
+  const [prefill, setPrefill] = useState(null);
 
   const data = useMemo(() => (brandName ? buildData(brandName) : null), [brandName]);
 
@@ -39,6 +40,9 @@ export function AppProvider({ children }) {
     closeProfile: () => setSelectedId(null),
     markReported: (id) => setReported((r) => ({ ...r, [id]: true })),
     recordAnalysis: () => setAnalyzedCount((c) => c + 1),
+    prefill,
+    clearPrefill: () => setPrefill(null),
+    sendToAnalyzer: (text) => { setPrefill(text); setSelectedId(null); setView('scam'); },
   };
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

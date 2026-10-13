@@ -1,5 +1,5 @@
 'use client';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { AlertOctagon, CheckCircle2, Languages, Link2, Phone, Sparkles, Wallet } from 'lucide-react';
 import { useApp } from './AppContext';
@@ -66,19 +66,27 @@ function Result({ r, text }) {
 }
 
 export default function ScamAnalyzer() {
-  const { data, recordAnalysis } = useApp();
-  const [text, setText] = useState('');
+  const { data, recordAnalysis, prefill, clearPrefill } = useApp();
+  const [text, setText] = useState(prefill || '');
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const analyze = async () => {
+  const analyze = async (input = text) => {
     setLoading(true);
     setResult(null);
-    const r = await analyzeMessage(text, { officialDomains: data.brand.officialDomains });
-    setResult({ r, text });
+    const r = await analyzeMessage(input, { officialDomains: data.brand.officialDomains });
+    setResult({ r, text: input });
     setLoading(false);
     recordAnalysis();
   };
+
+  const started = useRef(false);
+  useEffect(() => {
+    if (!prefill || started.current) return;
+    started.current = true;
+    clearPrefill();
+    analyze(prefill);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div>
@@ -94,7 +102,7 @@ export default function ScamAnalyzer() {
               placeholder="e.g. Badhai ho! Aap lucky draw ke winner hain..."
               className="w-full resize-none rounded-lg border border-slate-700 bg-slate-950 p-4 text-base text-white placeholder:text-slate-600 transition-colors focus:border-teal-500 focus:outline-none"
             />
-            <Button data-testid="analyze-btn" className="mt-4 w-full py-3 text-base" disabled={!text.trim() || loading} onClick={analyze}>
+            <Button data-testid="analyze-btn" className="mt-4 w-full py-3 text-base" disabled={!text.trim() || loading} onClick={() => analyze()}>
               {loading ? 'Analyzing...' : 'Analyze message'}
             </Button>
           </Card>
