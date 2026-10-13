@@ -2,10 +2,14 @@
 import { getDomain } from './riskEngine';
 
 export const CATEGORIES = {
-  'Fake Giveaway': ['giveaway', 'winner', 'won', 'lucky draw', 'congratulations', 'prize', 'hamper', 'claim', 'free gift', 'badhai', 'inaam', 'jeeta', 'share this post', 'win'],
-  Phishing: ['verify', 'kyc', 'suspended', 'login', 'update card', 'update your card', 'otp', 'password', 'expires', 'account blocked', 'click here', 'cashback', 'wallet'],
+  'Fake Giveaway': ['giveaway', 'winner', 'won', 'lucky draw', 'congratulations', 'prize', 'hamper', 'claim', 'free gift', 'badhai', 'inaam', 'jeeta', 'share this post', 'win', 'scholarship'],
+  Phishing: ['verify', 'kyc', 'suspended', 'login', 'update card', 'update your card', 'otp', 'password', 'expires', 'expire', 'expired', 'renew', 'account blocked', 'click here', 'cashback', 'wallet', 'upi pin', 'card number', 'cvv', 'bank account', 'id number'],
   'Fake Customer Support': ['customer care', 'helpline', 'support', 'refund', 'call now', 'whatsapp us', 'cancel your order', 'toll free', 'anydesk', 'teamviewer', 'atka'],
+  'Advance Fee Scam': ['processing fee', 'registration fee', 'joining fee', 'pay rs', 'loan approved', 'uniform', 'offer letter', 'certificate', 'without giving the exam', 'placement guarantee'],
 };
+
+// Safety guidance typical of genuine brand messages.
+const SAFE_RE = /never (?:ask|pay|charge)|is (?:always )?free|report anyone/i;
 
 const URGENCY = ['urgent', 'within 24 hours', 'immediately', 'turant', 'abhi'];
 const HINGLISH = ['hai', 'hain', 'aap', 'aapka', 'karein', 'ke', 'pe', 'ho', 'apna', 'hua', 'pehle', 'turant', 'inaam', 'badhai', 'paane', 'liye', 'bhejein', 'abhi', 'atka'];
@@ -18,7 +22,7 @@ export const keywordRegex = (kw, flags = 'i') => new RegExp(`(?<![a-z])${escape(
 const UPI_RE = /[a-z0-9][\w.-]*@[a-z]{2,}(?![\w]|\.\w)/gi;
 const EMAIL_RE = /[\w.+-]+@[\w-]+\.[\w.]+/gi;
 const PHONE_RE = /(?:\+91[\s-]?)?\b[6-9]\d{4}[\s-]?\d{5}\b/g;
-const LINK_RE = /\b(?:https?:\/\/)?(?:[a-z0-9-]+\.)+(?:com|in|ly|me|shop|net|org|co|io|xyz|app|link|info|store)(?:\/[^\s]*)?/gi;
+const LINK_RE = /\b(?:https?:\/\/)?(?:[a-z0-9-]+\.)+(?:com|in|ly|me|shop|net|org|co|io|xyz|app|link|info|store|example)(?:\/[^\s]*)?/gi;
 const MONEY_RE = /\bpay\b|\bsend\s*(?:₹|rs\.?)\s*\d|\botp\b|\bdownload\b|\binstall\b|\btransfer\b/i;
 
 const clean = (s) => s.replace(/[.,!?:;)]+$/, '');
@@ -54,6 +58,10 @@ export function analyzeText(text, { officialDomains = DEFAULT_OFFICIAL } = {}) {
   const words = (text.toLowerCase().match(/[a-z]+/g) || []);
   const language = words.filter((w) => HINGLISH.includes(w)).length >= 2 ? 'Hinglish' : 'English';
   const base = { keywords: [...keywords, ...urgency], entities, badLinks, boosters, language, hitsByCategory, source: 'Rule-based' };
+
+  if (SAFE_RE.test(text) && !badLinks.length && !entities.phones.length && !entities.upis.length) {
+    return { ...base, isScam: false, type: 'No scam indicators found', confidence: 0, explanation: 'Contains safety guidance (e.g. "never ask for OTP", "applying is free") and no risky links, phone numbers or UPI IDs.' };
+  }
 
   if (totalHits === 0 && boosters.length === 0) {
     return { ...base, isScam: false, type: 'No scam indicators found', confidence: 0, explanation: 'No scam keywords, suspicious links, phone numbers, UPI IDs or payment requests were found.' };

@@ -123,7 +123,7 @@ export default function ProfileDrawer() {
                 {linked.map((m) => (
                   <li key={m.id} data-testid={`linked-message-${m.id}`} className="rounded-lg border border-slate-800 bg-slate-900 p-4">
                     <div className="mb-2 flex items-center justify-between gap-3">
-                      <span className="inline-block rounded-full bg-red-500/15 px-2.5 py-0.5 text-xs font-semibold text-red-300 ring-1 ring-red-500/30">{m.analysis.type}</span>
+                      <span className={clsx('inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1', m.analysis.isScam ? 'bg-red-500/15 text-red-300 ring-red-500/30' : 'bg-emerald-500/15 text-emerald-300 ring-emerald-500/30')}>{m.analysis.type}</span>
                       <button data-testid={`send-to-analyzer-${m.id}`} onClick={() => sendToAnalyzer(m.text)} className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium text-teal-300 transition-colors hover:bg-teal-500/10 hover:text-teal-200">
                         <ScanSearch className="h-4 w-4" /> Send to Analyzer
                       </button>

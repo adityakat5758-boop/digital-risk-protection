@@ -6,8 +6,20 @@ export const WEIGHTS = [
   { name: 'Copied bio', max: 20, rule: 'Word overlap with official bio >= 70% +20, 40-70% +10' },
   { name: 'Logo reuse', max: 15, rule: 'Logo similarity >= 0.85 +15' },
   { name: 'New account', max: 15, rule: 'Under 30 days +15, 30-90 days +8' },
-  { name: 'Follower ratio', max: 10, rule: 'Followers/following < 0.05 and following > 500 +10' },
+  { name: 'Follower ratio', max: 10, rule: 'Followers/following < 0.05 and following > 500 +10; follows more than follow it (following > 1000) +5' },
   { name: 'Suspicious link', max: 10, rule: 'Non-official domain that is a shortener, wa.me, t.me or uses the brand name +10' },
+  { name: 'Scam bait in bio', max: 25, rule: 'Bio asks for OTP/card/bank data, upfront fees, promises rewards, pushes off-platform contact or urgency: 2+ kinds +25, 1 kind +10 (skipped for copied bios)' },
+];
+
+// Kinds of scam bait looked for in a profile bio.
+const BAIT = [
+  { kind: 'asks for sensitive data', re: /\b(otp|upi pin|pin|cvv|card details|card number|bank details|bank account|id number)\b/i },
+  { kind: 'demands an upfront fee', re: /\b(pay rs|processing fee|registration|joining fee|upfront)\b/i },
+  { kind: 'promises rewards', re: /\b(cashback|win|won|free|giveaway|prize|scholarship|guarantee|instant (?:loan|refund)|earn|without an exam|no documents)\b/i },
+  { kind: 'fake support', re: /\b(helpline|refunds?|kyc|dm us|customer care|support)\b/i },
+  { kind: 'engagement bait', re: /(follow \+ share|share with \d+ friends|tag \d+ friends)/i },
+  { kind: 'off-platform contact', re: /(\+91[\s-]?)?\b[6-9]\d{4}[\s-]?\d{5}\b/ },
+  { kind: 'urgency', re: /\b(limited|hurry|today|now|within \d+)\b/i },
 ];
 
 const CHAR_MAP = { 0: 'o', 1: 'l', 3: 'e', 4: 'a', 5: 's', $: 's' };
@@ -62,7 +74,22 @@ function usernameSignal(handle, brandKey) {
     return { name, points: 25, reason: `Username '${handle}' is only ${dist} character${dist > 1 ? 's' : ''} away from '${brandKey}'.` };
   if (normalized.includes(brandKey))
     return { name, points: 20, reason: `Username '${handle}' contains the brand name '${brandKey}'.` };
+  // Misspelled brand inside the handle, e.g. 'paynnest.official' or 'learnovva'.
+  const tokens = handle.toLowerCase().split(/[._\-]/).map(normalizeHandle);
+  const prefixes = [-1, 1].map((d) => normalized.slice(0, brandKey.length + d));
+  const misspelt = [...tokens, ...prefixes].find((t) => t.length >= brandKey.length - 1 && levenshtein(t, brandKey) === 1);
+  if (misspelt)
+    return { name, points: 25, reason: `Username '${handle}' hides a 1-character misspelling of the brand ('${misspelt}' vs '${brandKey}').` };
   return { name, points: 0, reason: 'Username does not resemble the brand.' };
+}
+
+function baitSignal(bio, copied) {
+  const name = 'Scam bait in bio';
+  if (copied) return { name, points: 0, reason: 'Bio is copied from the official account (scored under Copied bio).' };
+  const kinds = BAIT.filter((b) => b.re.test(bio || '')).map((b) => b.kind);
+  if (kinds.length >= 2) return { name, points: 25, reason: `Bio ${kinds.join(', ')}.` };
+  if (kinds.length === 1) return { name, points: 10, reason: `Bio ${kinds[0]}.` };
+  return { name, points: 0, reason: 'No scam bait found in the bio.' };
 }
 
 function bioSignal(bio, officialBio) {
@@ -93,6 +120,8 @@ function ratioSignal(followers, following) {
   const ratio = following ? followers / following : Infinity;
   if (ratio < 0.05 && following > 500)
     return { name, points: 10, reason: `Follows ${following.toLocaleString('en-IN')} accounts but has only ${followers.toLocaleString('en-IN')} followers (ratio ${ratio.toFixed(2)}), a typical fake-account pattern.` };
+  if (following > followers && following > 1000)
+    return { name, points: 5, reason: `Follows more accounts (${following.toLocaleString('en-IN')}) than follow it (${followers.toLocaleString('en-IN')}), a follow-for-follow pattern.` };
   return { name, points: 0, reason: 'Follower to following ratio looks normal.' };
 }
 
@@ -113,14 +142,16 @@ export function scoreProfile(profile, brand) {
   if (profile.verified) {
     return { score: 0, band: getBand(0), signals: [{ name: 'Verified account', points: 0, reason: 'Platform-verified account, treated as genuine.' }] };
   }
-  const brandKey = normalizeHandle(brand.handle);
+  const brandKey = normalizeHandle(brand.name);
+  const bio = bioSignal(profile.bio, brand.bio);
   const signals = [
     usernameSignal(profile.handle, brandKey),
-    bioSignal(profile.bio, brand.bio),
+    bio,
     logoSignal(profile.logoSimilarity),
     ageSignal(profile.accountAgeDays),
     ratioSignal(profile.followers, profile.following),
     linkSignal(profile.link, brandKey, brand.officialDomains),
+    baitSignal(profile.bio, bio.points === 20),
   ];
   const score = Math.min(100, signals.reduce((s, x) => s + x.points, 0));
   return { score, band: getBand(score), signals };

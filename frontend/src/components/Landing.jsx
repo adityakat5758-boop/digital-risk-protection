@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Search, ShieldCheck, Info, Link2 } from 'lucide-react';
 import { useApp } from './AppContext';
-import { isSupportedBrand } from '@/data/provider';
+import { isSupportedBrand, SUPPORTED_BRANDS } from '@/data/provider';
 import { Footer } from './common';
 
 const CHIP = 'rounded-full border border-teal-500/40 bg-teal-500/10 px-4 py-1.5 font-medium text-teal-200 transition-colors hover:bg-teal-500/20';
@@ -43,7 +43,7 @@ export function BrandSearch({ compact = false }) {
       </form>
       {error && (
         <p data-testid="brand-unsupported-msg" className="mt-4 inline-flex items-center gap-1.5 text-sm text-amber-300">
-          <Info className="h-4 w-4" /> Demo dataset covers Zenvyra
+          <Info className="h-4 w-4" /> Demo dataset covers {SUPPORTED_BRANDS.join(', ')}
         </p>
       )}
       <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-400">

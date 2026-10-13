@@ -92,7 +92,7 @@ export default function Dashboard() {
       </PageHeader>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Stat icon={Users} label="Profiles scanned" value={profiles.length} sub="Across 4 platforms" testId="stat-profiles-scanned" delay="0ms" />
+        <Stat icon={Users} label="Profiles scanned" value={profiles.length} sub={(() => { const n = new Set(profiles.map((p) => p.platform)).size; return `Across ${n} platform${n === 1 ? '' : 's'}`; })()} testId="stat-profiles-scanned" delay="0ms" />
         <Stat icon={AlertTriangle} label="High-risk profiles" value={high.length} sub={`${reportedCount} reported`} testId="stat-high-risk" accent="text-red-400" delay="60ms" />
         <Stat icon={AppWindow} label="Fake apps found" value={fakeApps} sub={`of ${apps.length} listings checked`} testId="stat-fake-apps" accent="text-amber-400" delay="120ms" />
         <Stat icon={MessageSquareWarning} label="Scam messages analyzed" value={messages.length + analyzedCount} sub={`${scams} known scams in dataset`} testId="stat-scam-messages" delay="180ms" />

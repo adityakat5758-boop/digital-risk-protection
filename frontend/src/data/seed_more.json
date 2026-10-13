@@ -1,0 +1,559 @@
+{
+ "datasets": [
+  {
+   "brand": {
+    "name": "Paynest",
+    "handle": "paynest.app",
+    "platform": "Instagram",
+    "verified": true,
+    "followers": 1250000,
+    "following": 98,
+    "createdYear": 2019,
+    "bio": "Official Paynest. Simple UPI payments and bill pay. Paynest never asks for your PIN or OTP. paynest.example/safety",
+    "link": "paynest.example",
+    "officialDomains": [
+     "paynest.example"
+    ],
+    "officialApp": "Paynest - UPI & Bill Pay",
+    "officialDeveloper": "Paynest Payments Pvt Ltd"
+   },
+   "profiles": [
+    {
+     "id": "P02",
+     "platform": "Instagram",
+     "handle": "paynest.help",
+     "displayName": "Paynest Help",
+     "bio": "Official support for Paynest. We reply only in public comments. We never ask for your PIN, OTP or card number.",
+     "link": "paynest.example/help",
+     "followers": 210000,
+     "following": 12,
+     "accountAgeDays": 2456,
+     "logoSimilarity": 0.05,
+     "verified": true
+    },
+    {
+     "id": "P03",
+     "platform": "Instagram",
+     "handle": "arjun.moneytips",
+     "displayName": "Arjun | Money tips",
+     "bio": "Explaining UPI, savings and budgeting. Use code ARJUN10 on Paynest (paid partnership disclosed).",
+     "link": "arjunmoneytips.example",
+     "followers": 64000,
+     "following": 310,
+     "accountAgeDays": 2282,
+     "logoSimilarity": 0.05,
+     "verified": false
+    },
+    {
+     "id": "P04",
+     "platform": "Instagram",
+     "handle": "paynest.app.support",
+     "displayName": "Paynest Support",
+     "bio": "Payment stuck? KYC pending? DM us now. Helpline +91 90000 00002",
+     "link": "paynest-kyc.example/update",
+     "followers": 420,
+     "following": 18,
+     "accountAgeDays": 26,
+     "logoSimilarity": 0.9,
+     "verified": false
+    },
+    {
+     "id": "P05",
+     "platform": "Instagram",
+     "handle": "paynest_app_",
+     "displayName": "Paynest",
+     "bio": "Official Paynest. Simple UPI payments and bill pay. Paynest never asks for your PIN or OTP. paynest.example/safety",
+     "link": "paynest-cashback.example/win",
+     "followers": 2100,
+     "following": 5400,
+     "accountAgeDays": 39,
+     "logoSimilarity": 0.95,
+     "verified": false
+    },
+    {
+     "id": "P06",
+     "platform": "Instagram",
+     "handle": "paynnest.official",
+     "displayName": "Paynest Official",
+     "bio": "Get Rs 500 cashback on your first payment. Limited users. Click the link in bio.",
+     "link": "paynest-cashback.example/claim",
+     "followers": 6700,
+     "following": 6900,
+     "accountAgeDays": 14,
+     "logoSimilarity": 0.9,
+     "verified": false
+    },
+    {
+     "id": "P07",
+     "platform": "Facebook",
+     "handle": "paynest.loans",
+     "displayName": "Paynest Instant Loan",
+     "bio": "Instant loan up to 2 lakh. No documents. Processing fee Rs 999 upfront.",
+     "link": "paynest-loan.example/apply",
+     "followers": 9800,
+     "following": 150,
+     "accountAgeDays": 116,
+     "logoSimilarity": 0.87,
+     "verified": false
+    }
+   ],
+   "messages": [
+    {
+     "id": "MP1",
+     "platform": "Instagram",
+     "linkedProfileId": "P04",
+     "text": "Your Paynest KYC will expire today and your wallet will be blocked. Share the OTP sent to your phone to complete verification."
+    },
+    {
+     "id": "MP2",
+     "platform": "Instagram",
+     "linkedProfileId": "P06",
+     "text": "Aapko Paynest ki taraf se Rs 500 cashback mila hai. Receive karne ke liye is link par apna UPI PIN daalein: https://paynest-cashback.example/claim"
+    },
+    {
+     "id": "MP3",
+     "platform": "Instagram",
+     "linkedProfileId": "P07",
+     "text": "Loan approved: Rs 2,00,000. Pay Rs 999 processing fee now to release the amount today."
+    },
+    {
+     "id": "MP4",
+     "platform": "Instagram",
+     "linkedProfileId": "P02",
+     "text": "Hi, we cannot see your payment details here. Please use Help inside the Paynest app. We will never ask for your PIN or OTP."
+    }
+   ],
+   "apps": [
+    {
+     "id": "pa1",
+     "title": "Paynest - UPI & Bill Pay",
+     "developer": "Paynest Payments Pvt Ltd",
+     "installs": 10000000,
+     "rating": 4.5,
+     "permissions": [
+      "Camera",
+      "Notifications",
+      "Location"
+     ]
+    },
+    {
+     "id": "pa2",
+     "title": "Paynest KYC Update",
+     "developer": "KYC Help Desk",
+     "installs": 1500,
+     "rating": 2.4,
+     "permissions": [
+      "SMS",
+      "Accessibility",
+      "Overlay",
+      "Contacts"
+     ]
+    },
+    {
+     "id": "pa3",
+     "title": "Paynest Cashback Rewards",
+     "developer": "Reward Zone Apps",
+     "installs": 3200,
+     "rating": 3.0,
+     "permissions": [
+      "SMS",
+      "Contacts",
+      "Notifications"
+     ]
+    },
+    {
+     "id": "pa4",
+     "title": "Paynest Instant Loan",
+     "developer": "QuickCash Finserv",
+     "installs": 15000,
+     "rating": 3.6,
+     "permissions": [
+      "Contacts",
+      "Call Logs",
+      "Camera",
+      "Storage"
+     ]
+    },
+    {
+     "id": "pa5",
+     "title": "Expense Tracker Lite",
+     "developer": "Moneywise Labs",
+     "installs": 400000,
+     "rating": 4.3,
+     "permissions": [
+      "Notifications"
+     ]
+    }
+   ]
+  },
+  {
+   "brand": {
+    "name": "Bytebite",
+    "handle": "bytebite.official",
+    "platform": "Instagram",
+    "verified": true,
+    "followers": 780000,
+    "following": 140,
+    "createdYear": 2018,
+    "bio": "Official Bytebite. Hot food, fast delivery. Orders and refunds only inside the app. bytebite.example",
+    "link": "bytebite.example",
+    "officialDomains": [
+     "bytebite.example"
+    ],
+    "officialApp": "Bytebite - Food Delivery",
+    "officialDeveloper": "Bytebite Technologies Pvt Ltd"
+   },
+   "profiles": [
+    {
+     "id": "B02",
+     "platform": "Instagram",
+     "handle": "bytebite.riders",
+     "displayName": "Bytebite Riders",
+     "bio": "Official page for Bytebite delivery partners. Join only through the app. We never charge a joining fee.",
+     "link": "bytebite.example/riders",
+     "followers": 42000,
+     "following": 30,
+     "accountAgeDays": 2025,
+     "logoSimilarity": 0.05,
+     "verified": true
+    },
+    {
+     "id": "B03",
+     "platform": "Instagram",
+     "handle": "foodie.sneha",
+     "displayName": "Sneha eats",
+     "bio": "Pune food diaries. Tried Bytebite and loved the biryani. Not affiliated.",
+     "link": "foodiesneha.example",
+     "followers": 15500,
+     "following": 820,
+     "accountAgeDays": 1822,
+     "logoSimilarity": 0.05,
+     "verified": false
+    },
+    {
+     "id": "B04",
+     "platform": "Instagram",
+     "handle": "bytebite.offical",
+     "displayName": "Bytebite",
+     "bio": "Official Bytebite. Hot food, fast delivery. Orders and refunds only inside the app. bytebite.example",
+     "link": "bytebite-gold.example/renew",
+     "followers": 780,
+     "following": 1900,
+     "accountAgeDays": 7,
+     "logoSimilarity": 0.96,
+     "verified": false
+    },
+    {
+     "id": "B05",
+     "platform": "Instagram",
+     "handle": "bytebite.refund.help",
+     "displayName": "Bytebite Refund Support",
+     "bio": "Wrong order? Cold food? Get an instant refund. DM your order ID and card details.",
+     "link": "bytebite-refund.example/form",
+     "followers": 95,
+     "following": 12,
+     "accountAgeDays": 2,
+     "logoSimilarity": 0.88,
+     "verified": false
+    },
+    {
+     "id": "B06",
+     "platform": "Instagram",
+     "handle": "bytebite.rider.jobs",
+     "displayName": "Bytebite Delivery Jobs",
+     "bio": "Earn 25,000 a month as a delivery partner. Pay Rs 1,200 for uniform and ID card. Join now.",
+     "link": "bytebite-jobs.example/join",
+     "followers": 5600,
+     "following": 300,
+     "accountAgeDays": 55,
+     "logoSimilarity": 0.86,
+     "verified": false
+    },
+    {
+     "id": "B07",
+     "platform": "Instagram",
+     "handle": "bytebite_free_coupons",
+     "displayName": "Bytebite Coupons",
+     "bio": "Daily free coupons for Bytebite orders. Share with 5 friends to unlock.",
+     "link": "bytebite-coupons.example",
+     "followers": 18400,
+     "following": 16200,
+     "accountAgeDays": 308,
+     "logoSimilarity": 0.6,
+     "verified": false
+    }
+   ],
+   "messages": [
+    {
+     "id": "MB1",
+     "platform": "Instagram",
+     "linkedProfileId": "B05",
+     "text": "Sorry for the bad order. Share your card number, expiry and CVV and we will refund Rs 450 right now."
+    },
+    {
+     "id": "MB2",
+     "platform": "Instagram",
+     "linkedProfileId": "B06",
+     "text": "Delivery partner job open. Pay Rs 1,200 for uniform and ID card today, start earning tomorrow."
+    },
+    {
+     "id": "MB3",
+     "platform": "Instagram",
+     "linkedProfileId": "B04",
+     "text": "Your Bytebite Gold membership has expired. Renew at https://bytebite-gold.example/renew and get 90% off."
+    },
+    {
+     "id": "MB4",
+     "platform": "Instagram",
+     "linkedProfileId": "B02",
+     "text": "Welcome! Joining is free. Please apply only through the Bytebite Partner app and never pay anyone for a job."
+    }
+   ],
+   "apps": [
+    {
+     "id": "ba1",
+     "title": "Bytebite - Food Delivery",
+     "developer": "Bytebite Technologies Pvt Ltd",
+     "installs": 5000000,
+     "rating": 4.4,
+     "permissions": [
+      "Location",
+      "Notifications",
+      "Camera"
+     ]
+    },
+    {
+     "id": "ba2",
+     "title": "Bytebite Gold Membership",
+     "developer": "Gold Perks Studio",
+     "installs": 2500,
+     "rating": 2.8,
+     "permissions": [
+      "SMS",
+      "Overlay",
+      "Accessibility"
+     ]
+    },
+    {
+     "id": "ba3",
+     "title": "Bytebite Rider Jobs",
+     "developer": "Delivery Jobs India",
+     "installs": 6000,
+     "rating": 3.2,
+     "permissions": [
+      "Contacts",
+      "SMS",
+      "Camera",
+      "Location"
+     ]
+    },
+    {
+     "id": "ba4",
+     "title": "Bytebite Free Coupons",
+     "developer": "Coupon Kart",
+     "installs": 22000,
+     "rating": 3.7,
+     "permissions": [
+      "Contacts",
+      "Storage"
+     ]
+    },
+    {
+     "id": "ba5",
+     "title": "Recipe Box",
+     "developer": "HomeChef Apps",
+     "installs": 800000,
+     "rating": 4.5,
+     "permissions": [
+      "Camera",
+      "Storage"
+     ]
+    }
+   ]
+  },
+  {
+   "brand": {
+    "name": "Learnova",
+    "handle": "learnova.official",
+    "platform": "Instagram",
+    "verified": true,
+    "followers": 340000,
+    "following": 75,
+    "createdYear": 2020,
+    "bio": "Official Learnova. Courses, mock tests and mentors for students. No hidden charges, ever. learnova.example",
+    "link": "learnova.example",
+    "officialDomains": [
+     "learnova.example"
+    ],
+    "officialApp": "Learnova - Courses & Tests",
+    "officialDeveloper": "Learnova Edtech Pvt Ltd"
+   },
+   "profiles": [
+    {
+     "id": "L02",
+     "platform": "Instagram",
+     "handle": "learnova.placements",
+     "displayName": "Learnova Placements",
+     "bio": "Official placement cell of Learnova. Job listings only on learnova.example/jobs. We never charge candidates.",
+     "link": "learnova.example/jobs",
+     "followers": 27000,
+     "following": 20,
+     "accountAgeDays": 1875,
+     "logoSimilarity": 0.05,
+     "verified": true
+    },
+    {
+     "id": "L03",
+     "platform": "Instagram",
+     "handle": "study.with.kavya",
+     "displayName": "Kavya | Study tips",
+     "bio": "Class 12 and college study tips. Learnova student sharing my routine. Not affiliated.",
+     "link": "",
+     "followers": 11200,
+     "following": 540,
+     "accountAgeDays": 2100,
+     "logoSimilarity": 0.05,
+     "verified": false
+    },
+    {
+     "id": "L04",
+     "platform": "Instagram",
+     "handle": "learnovva.official",
+     "displayName": "Learnova Official",
+     "bio": "Official Learnova. Free certificate and internship for all students. Register below.",
+     "link": "learnova-internship.example/register",
+     "followers": 3900,
+     "following": 4700,
+     "accountAgeDays": 21,
+     "logoSimilarity": 0.92,
+     "verified": false
+    },
+    {
+     "id": "L05",
+     "platform": "Instagram",
+     "handle": "learnova.internships",
+     "displayName": "Learnova Internships",
+     "bio": "100% placement guarantee. Pay Rs 2,999 registration, get your offer letter in 24 hours.",
+     "link": "learnova-internship.example/apply",
+     "followers": 7100,
+     "following": 220,
+     "accountAgeDays": 73,
+     "logoSimilarity": 0.86,
+     "verified": false
+    },
+    {
+     "id": "L06",
+     "platform": "Instagram",
+     "handle": "learnova.scholarship2026",
+     "displayName": "Learnova Scholarship",
+     "bio": "Win a Rs 50,000 scholarship. Share your ID number and bank details to apply.",
+     "link": "learnova-scholarship.example/form",
+     "followers": 640,
+     "following": 35,
+     "accountAgeDays": 4,
+     "logoSimilarity": 0.9,
+     "verified": false
+    },
+    {
+     "id": "L07",
+     "platform": "Instagram",
+     "handle": "learnova_certificates",
+     "displayName": "Learnova Certificates",
+     "bio": "Get a Learnova certificate without an exam. Pay Rs 499. Valid for jobs.",
+     "link": "learnova-cert.example",
+     "followers": 2300,
+     "following": 140,
+     "accountAgeDays": 150,
+     "logoSimilarity": 0.88,
+     "verified": false
+    }
+   ],
+   "messages": [
+    {
+     "id": "ML1",
+     "platform": "Instagram",
+     "linkedProfileId": "L05",
+     "text": "Congratulations, you are selected for a Learnova internship. Pay Rs 2,999 registration fee within 2 hours to confirm your seat."
+    },
+    {
+     "id": "ML2",
+     "platform": "Instagram",
+     "linkedProfileId": "L06",
+     "text": "You won a Rs 50,000 scholarship! Send your ID number, bank account and OTP to receive the amount."
+    },
+    {
+     "id": "ML3",
+     "platform": "Instagram",
+     "linkedProfileId": "L07",
+     "text": "Get your Learnova certificate without giving the exam. Pay Rs 499 on UPI and receive the PDF in 10 minutes."
+    },
+    {
+     "id": "ML4",
+     "platform": "Instagram",
+     "linkedProfileId": "L02",
+     "text": "Hi! New openings are listed at learnova.example/jobs. Applying is always free. Report anyone asking for money."
+    }
+   ],
+   "apps": [
+    {
+     "id": "la1",
+     "title": "Learnova - Courses & Tests",
+     "developer": "Learnova Edtech Pvt Ltd",
+     "installs": 1000000,
+     "rating": 4.6,
+     "permissions": [
+      "Camera",
+      "Notifications",
+      "Storage"
+     ]
+    },
+    {
+     "id": "la2",
+     "title": "Learnova Internship Portal",
+     "developer": "CareerBoost Labs",
+     "installs": 1800,
+     "rating": 2.6,
+     "permissions": [
+      "SMS",
+      "Contacts",
+      "Accessibility"
+     ]
+    },
+    {
+     "id": "la3",
+     "title": "Learnova Certificate Hub",
+     "developer": "CertiFast",
+     "installs": 4200,
+     "rating": 3.1,
+     "permissions": [
+      "Storage",
+      "Overlay"
+     ]
+    },
+    {
+     "id": "la4",
+     "title": "Learnova Scholarship 2026",
+     "developer": "EduGrant Services",
+     "installs": 900,
+     "rating": 2.9,
+     "permissions": [
+      "SMS",
+      "Contacts",
+      "Call Logs",
+      "Camera"
+     ]
+    },
+    {
+     "id": "la5",
+     "title": "Flashcards Pro",
+     "developer": "StudyStack Inc",
+     "installs": 250000,
+     "rating": 4.4,
+     "permissions": [
+      "Notifications"
+     ]
+    }
+   ]
+  }
+ ]
+}
