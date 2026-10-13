@@ -1,9 +1,11 @@
 'use client';
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
-import { AlertOctagon, CheckCircle2, Languages, Link2, Phone, Sparkles, Wallet } from 'lucide-react';
+import { AlertOctagon, CheckCircle2, Languages, Link2, Phone, RotateCcw, Sparkles, Wallet } from 'lucide-react';
 import { useApp } from './AppContext';
 import { Button, Card, PageHeader } from './common';
+import { UrlBanner } from './LinkScanner';
+import { looksLikeUrl } from '@/lib/linkScanner';
 import { analyzeMessage, keywordRegex, MAX_MESSAGE_LENGTH } from '@/lib/scamAnalyzer';
 
 // Splits text into plain and keyword segments, each keyed by its character offset.
@@ -75,6 +77,8 @@ function Result({ r, text }) {
 }
 
 function MessageInput({ text, onChange, onAnalyze, loading }) {
+  const { openLinkScanner } = useApp();
+  const isUrl = looksLikeUrl(text);
   return (
     <Card className="p-5">
       <textarea
@@ -86,7 +90,8 @@ function MessageInput({ text, onChange, onAnalyze, loading }) {
         placeholder="e.g. Badhai ho! Aap lucky draw ke winner hain..."
         className="w-full resize-none rounded-lg border border-slate-700 bg-slate-950 p-4 text-base text-white placeholder:text-slate-600 transition-colors focus:border-teal-500 focus:outline-none"
       />
-      <Button data-testid="analyze-btn" className="mt-4 w-full py-3 text-base" disabled={!text.trim() || loading} onClick={onAnalyze}>
+      {isUrl && <UrlBanner onUse={() => openLinkScanner(text.trim())} />}
+      <Button data-testid="analyze-btn" className="mt-4 w-full py-3 text-base" disabled={!text.trim() || loading || isUrl} onClick={onAnalyze}>
         {loading ? 'Analyzing...' : 'Analyze message'}
       </Button>
     </Card>
@@ -117,7 +122,7 @@ function SampleChips({ messages, onPick }) {
 
 const SKELETON_WIDTHS = [40, 100, 90, 70];
 
-function ResultPanel({ loading, result }) {
+function ResultPanel({ loading, result, onAnother }) {
   if (loading) {
     return (
       <Card data-testid="scam-loading" className="space-y-4 p-6">
@@ -125,7 +130,14 @@ function ResultPanel({ loading, result }) {
       </Card>
     );
   }
-  if (result) return <Result r={result.r} text={result.text} />;
+  if (result) {
+    return (
+      <>
+        <Result r={result.r} text={result.text} />
+        <Button data-testid="scan-another-message-btn" variant="ghost" className="mt-4" onClick={onAnother}><RotateCcw className="h-4 w-4" /> Scan Another Message</Button>
+      </>
+    );
+  }
   return (
     <Card data-testid="scam-empty" className="flex h-full min-h-[260px] flex-col items-center justify-center gap-3 border-dashed p-6 text-center text-slate-500">
       <AlertOctagon className="h-8 w-8" />
@@ -168,7 +180,7 @@ export default function ScamAnalyzer() {
           <SampleChips messages={data?.messages ?? []} onPick={(t) => { setText(t); setResult(null); }} />
         </div>
         <div>
-          <ResultPanel loading={loading} result={result} />
+          <ResultPanel loading={loading} result={result} onAnother={() => { setText(''); setResult(null); }} />
         </div>
       </div>
     </div>

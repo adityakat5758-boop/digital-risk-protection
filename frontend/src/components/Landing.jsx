@@ -1,25 +1,24 @@
 'use client';
 import { useState } from 'react';
-import { Search, ShieldCheck, Info, Link2 } from 'lucide-react';
+import { Search, ShieldCheck, Info, Link2, MessageSquareWarning } from 'lucide-react';
 import { useApp } from './AppContext';
 import { isSupportedBrand, SUPPORTED_BRANDS } from '@/data/provider';
 import { Footer } from './common';
+import { LinkInput, UrlBanner } from './LinkScanner';
+import { looksLikeUrl } from '@/lib/linkScanner';
+import { MAX_MESSAGE_LENGTH } from '@/lib/scamAnalyzer';
 
 const CHIP = 'rounded-full border border-teal-500/40 bg-teal-500/10 px-4 py-1.5 font-medium text-teal-200 transition-colors hover:bg-teal-500/20';
 const EXAMPLE_BRANDS = ['Zenvyra', 'Paynest', 'Bytebite', 'Learnova'];
-const EXAMPLE_LINKS = [
-  { id: 'paynest', link: 'https://paynest-cashback.example/claim', text: 'Claim your Paynest cashback reward here: https://paynest-cashback.example/claim' },
-  { id: 'bytebite', link: 'https://bytebite-refund.example/form', text: 'Your Bytebite refund is pending. Fill this form to get your money back: https://bytebite-refund.example/form' },
-  { id: 'learnova', link: 'https://learnova-internship.example/apply', text: 'Congratulations! You are selected for a Learnova internship. Apply here: https://learnova-internship.example/apply' },
-];
 
-export function BrandSearch({ compact = false }) {
-  const { startScan, openAnalyzerWith } = useApp();
+export function BrandSearch({ compact = false, onLink }) {
+  const { startScan, openLinkScanner } = useApp();
   const [query, setQuery] = useState('');
   const [error, setError] = useState(false);
+  const isUrl = looksLikeUrl(query);
 
   const run = (name) => {
-    if (!name.trim()) return;
+    if (!name.trim() || looksLikeUrl(name)) return;
     if (!isSupportedBrand(name)) return setError(true);
     setError(false);
     startScan(name.trim());
@@ -27,50 +26,80 @@ export function BrandSearch({ compact = false }) {
 
   return (
     <div className="w-full">
-      <form onSubmit={(e) => { e.preventDefault(); run(query); }} className="group relative flex items-center rounded-2xl border border-slate-700 bg-slate-900/90 p-2 shadow-2xl shadow-teal-950/40 transition-colors focus-within:border-teal-500/70">
+      <form onSubmit={(e) => { e.preventDefault(); run(query); }} className={`group relative flex items-center rounded-2xl border border-slate-700 bg-slate-900/90 shadow-2xl shadow-teal-950/40 transition-colors focus-within:border-teal-500/70 ${compact ? 'p-1.5' : 'p-2'}`}>
         <Search className="ml-3 h-6 w-6 shrink-0 text-slate-500 group-focus-within:text-teal-400" />
         <input
-          data-testid="brand-search-input"
+          data-testid={compact ? 'compact-search-input' : 'brand-search-input'}
           autoFocus={!compact}
           value={query}
           onChange={(e) => { setQuery(e.target.value); setError(false); }}
-          placeholder="Enter a brand name to scan..."
-          className="min-w-0 flex-1 bg-transparent px-4 py-3 text-lg text-white placeholder:text-slate-500 focus:outline-none"
+          placeholder={compact ? 'Search another brand...' : 'Enter a brand name to scan...'}
+          className={`min-w-0 flex-1 bg-transparent px-4 text-white placeholder:text-slate-500 focus:outline-none ${compact ? 'py-2 text-base' : 'py-3 text-lg'}`}
         />
-        <button data-testid="brand-search-submit" type="submit" className="rounded-xl bg-teal-500 px-6 py-3 text-base font-semibold text-slate-950 transition-colors hover:bg-teal-400 active:scale-[0.98]">
+        <button data-testid={compact ? 'compact-search-submit' : 'brand-search-submit'} type="submit" className={`rounded-xl bg-teal-500 font-semibold text-slate-950 transition-colors hover:bg-teal-400 active:scale-[0.98] ${compact ? 'px-5 py-2 text-sm' : 'px-6 py-3 text-base'}`}>
           Scan
         </button>
       </form>
+      {isUrl && <UrlBanner onUse={() => (onLink ? onLink(query.trim()) : openLinkScanner(query.trim()))} />}
       {error && (
         <p data-testid="brand-unsupported-msg" className="mt-4 inline-flex items-center gap-1.5 text-sm text-amber-300">
           <Info className="h-4 w-4" /> Demo dataset covers {SUPPORTED_BRANDS.join(', ')}
         </p>
       )}
-      <ExampleChips onBrand={(b) => { setQuery(b); run(b); }} onLink={openAnalyzerWith} />
+      {!compact && (
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-400">
+          <span>Try:</span>
+          {EXAMPLE_BRANDS.map((b) => (
+            <button key={b} data-testid={`example-chip-${b.toLowerCase()}`} onClick={() => { setQuery(b); run(b); }} className={CHIP}>
+              {b}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-function ExampleChips({ onBrand, onLink }) {
+function MessageTab({ onLink }) {
+  const { openAnalyzerWith } = useApp();
+  const [text, setText] = useState('');
+  const isUrl = looksLikeUrl(text);
   return (
-    <>
-      <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-400">
-        <span>Try:</span>
-        {EXAMPLE_BRANDS.map((b) => (
-          <button key={b} data-testid={`example-chip-${b.toLowerCase()}`} onClick={() => onBrand(b)} className={CHIP}>
-            {b}
+    <div>
+      <textarea data-testid="home-message-input" autoFocus value={text} maxLength={MAX_MESSAGE_LENGTH} onChange={(e) => setText(e.target.value)} rows={4} placeholder="Paste a suspicious message (English or Hinglish)..." className="w-full resize-none rounded-2xl border border-slate-700 bg-slate-900/90 p-4 text-base text-white placeholder:text-slate-500 transition-colors focus:border-teal-500/70 focus:outline-none" />
+      {isUrl && <UrlBanner onUse={() => onLink(text.trim())} />}
+      <button data-testid="home-message-submit" disabled={!text.trim() || isUrl} onClick={() => openAnalyzerWith(text)} className="mt-3 rounded-xl bg-teal-500 px-6 py-3 text-base font-semibold text-slate-950 transition-colors hover:bg-teal-400 disabled:cursor-not-allowed disabled:opacity-50">
+        Analyze message
+      </button>
+    </div>
+  );
+}
+
+function LinkTab({ initial }) {
+  const { openLinkScanner } = useApp();
+  const [value, setValue] = useState(initial);
+  return <LinkInput value={value} onChange={setValue} onScan={openLinkScanner} autoFocus />;
+}
+
+const TABS = [['brand', 'Brand Scan', Search], ['message', 'Scam Message', MessageSquareWarning], ['link', 'Scam Link', Link2]];
+
+function HomeTabs() {
+  const [tab, setTab] = useState('brand');
+  const [carried, setCarried] = useState('');
+  const toLink = (url) => { setCarried(url); setTab('link'); };
+  return (
+    <div>
+      <div role="tablist" className="mb-4 flex flex-wrap gap-2">
+        {TABS.map(([id, label, Icon]) => (
+          <button key={id} role="tab" aria-selected={tab === id} data-testid={`home-tab-${id}`} onClick={() => setTab(id)} className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${tab === id ? 'border-teal-500/60 bg-teal-500/15 text-teal-200' : 'border-slate-700 text-slate-400 hover:border-slate-500 hover:text-slate-200'}`}>
+            <Icon className="h-4 w-4" /> {label}
           </button>
         ))}
       </div>
-      <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-400">
-        <span>Try a suspicious link:</span>
-        {EXAMPLE_LINKS.map(({ id, link, text }) => (
-          <button key={id} data-testid={`example-link-chip-${id}`} onClick={() => onLink(text)} className={`${CHIP} inline-flex items-center gap-1.5`}>
-            <Link2 className="h-3.5 w-3.5" /> {link}
-          </button>
-        ))}
-      </div>
-    </>
+      {tab === 'brand' && <BrandSearch onLink={toLink} />}
+      {tab === 'message' && <MessageTab onLink={toLink} />}
+      {tab === 'link' && <LinkTab key={carried} initial={carried} />}
+    </div>
   );
 }
 
@@ -90,7 +119,7 @@ export default function Landing() {
           Find fake profiles, scam messages and lookalike apps across Instagram, Facebook, X, Telegram and app stores. Every risk score is fully explainable.
         </p>
         <div className="mt-10 animate-fade-up" style={{ animationDelay: '240ms' }}>
-          <BrandSearch />
+          <HomeTabs />
         </div>
       </section>
       <Footer />

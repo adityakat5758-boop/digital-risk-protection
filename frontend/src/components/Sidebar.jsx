@@ -1,6 +1,6 @@
 'use client';
 import clsx from 'clsx';
-import { AppWindow, LayoutDashboard, MessageSquareWarning, ShieldCheck, Users } from 'lucide-react';
+import { AppWindow, LayoutDashboard, Link2, MessageSquareWarning, ShieldCheck, Users } from 'lucide-react';
 import { useApp } from './AppContext';
 
 const NAV = [
@@ -8,16 +8,17 @@ const NAV = [
   { id: 'profiles', label: 'Profiles', icon: Users },
   { id: 'scam', label: 'Scam Analyzer', icon: MessageSquareWarning },
   { id: 'apps', label: 'App Checker', icon: AppWindow },
+  { id: 'link', label: 'Link Scanner', icon: Link2 },
 ];
 
 export default function Sidebar() {
-  const { view, setView, data } = useApp();
+  const { view, setView, data, goHome, openLinkScanner } = useApp();
   return (
     <aside className="z-30 border-b border-slate-800 bg-slate-950 md:fixed md:inset-y-0 md:left-0 md:w-64 md:border-b-0 md:border-r">
-      <div className="flex items-center gap-2.5 px-6 py-5 md:py-7">
+      <button data-testid="logo-home-btn" onClick={goHome} className="flex items-center gap-2.5 px-6 py-5 transition-opacity hover:opacity-80 md:py-7">
         <ShieldCheck className="h-7 w-7 text-teal-400" />
         <span className="text-xl font-bold tracking-tight text-white">BrandGuard</span>
-      </div>
+      </button>
       {data && (
         <div className="mx-4 mb-4 hidden rounded-lg border border-slate-800 bg-slate-900 px-4 py-3 md:block">
           <p className="text-xs uppercase tracking-wider text-slate-500">Monitoring</p>
@@ -29,7 +30,7 @@ export default function Sidebar() {
           <button
             key={id}
             data-testid={`nav-${id}`}
-            onClick={() => setView(id)}
+            onClick={() => (id === 'link' ? openLinkScanner() : setView(id))}
             className={clsx(
               'flex shrink-0 items-center gap-3 rounded-lg px-4 py-3 text-[15px] font-medium transition-colors',
               view === id ? 'bg-teal-500/15 text-teal-200' : 'text-slate-400 hover:bg-slate-900 hover:text-slate-200'

@@ -9,9 +9,23 @@ import Profiles from '@/components/Profiles';
 import ProfileDrawer from '@/components/ProfileDrawer';
 import ScamAnalyzer from '@/components/ScamAnalyzer';
 import AppChecker from '@/components/AppChecker';
-import { Footer, PageSkeleton } from '@/components/common';
+import LinkScanner from '@/components/LinkScanner';
+import { Button, Footer, PageSkeleton } from '@/components/common';
+import { ArrowLeft } from 'lucide-react';
 
-const VIEWS = { dashboard: Dashboard, profiles: Profiles, scam: ScamAnalyzer, apps: AppChecker };
+const VIEWS = { dashboard: Dashboard, profiles: Profiles, scam: ScamAnalyzer, apps: AppChecker, link: LinkScanner };
+
+function TopBar() {
+  const { goHome } = useApp();
+  return (
+    <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start">
+      <Button data-testid="new-search-btn" variant="ghost" className="shrink-0 py-3" onClick={goHome}>
+        <ArrowLeft className="h-4 w-4" /> New Search
+      </Button>
+      <div className="flex-1"><BrandSearch compact /></div>
+    </div>
+  );
+}
 
 function Shell() {
   const { status, view, data } = useApp();
@@ -29,7 +43,8 @@ function Shell() {
       <Sidebar />
       <main className="flex min-h-screen flex-1 flex-col md:ml-64">
         <div key={view} className="mx-auto w-full max-w-7xl flex-1 animate-fade-up px-5 py-8 md:px-10">
-          {loading ? <PageSkeleton /> : data || view === 'scam' ? <View /> : <BrandSearch compact />}
+          <TopBar />
+          {loading ? <PageSkeleton /> : data || view === 'scam' || view === 'link' ? <View /> : null}
         </div>
         <Footer />
       </main>
