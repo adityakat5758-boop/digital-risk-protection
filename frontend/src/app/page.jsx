@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { AppProvider, useApp } from '@/components/AppContext';
-import Landing from '@/components/Landing';
+import Landing, { BrandSearch } from '@/components/Landing';
 import Scanning from '@/components/Scanning';
 import Sidebar from '@/components/Sidebar';
 import Dashboard from '@/components/Dashboard';
@@ -29,7 +29,7 @@ function Shell() {
       <Sidebar />
       <main className="flex min-h-screen flex-1 flex-col md:ml-64">
         <div key={view} className="mx-auto w-full max-w-7xl flex-1 animate-fade-up px-5 py-8 md:px-10">
-          {data && (loading ? <PageSkeleton /> : <View />)}
+          {loading ? <PageSkeleton /> : data || view === 'scam' ? <View /> : <BrandSearch compact />}
         </div>
         <Footer />
       </main>

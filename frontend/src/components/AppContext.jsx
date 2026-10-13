@@ -43,6 +43,7 @@ export function AppProvider({ children }) {
     prefill,
     clearPrefill: () => setPrefill(null),
     sendToAnalyzer: (text) => { setPrefill(text); setSelectedId(null); setView('scam'); },
+    openAnalyzerWith: (text) => { setPrefill(text); setStatus('ready'); setView('scam'); },
   };
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

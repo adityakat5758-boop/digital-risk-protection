@@ -74,7 +74,7 @@ export default function ScamAnalyzer() {
   const analyze = async (input = text) => {
     setLoading(true);
     setResult(null);
-    const r = await analyzeMessage(input, { officialDomains: data.brand.officialDomains });
+    const r = await analyzeMessage(input, data ? { officialDomains: data.brand.officialDomains } : undefined);
     setResult({ r, text: input });
     setLoading(false);
     recordAnalysis();
@@ -106,9 +106,9 @@ export default function ScamAnalyzer() {
               {loading ? 'Analyzing...' : 'Analyze message'}
             </Button>
           </Card>
-          <p className="mb-3 mt-6 text-sm font-medium text-slate-400">Load sample</p>
+          {data && <p className="mb-3 mt-6 text-sm font-medium text-slate-400">Load sample</p>}
           <div className="flex flex-wrap gap-2">
-            {data.messages.map((m, i) => (
+            {(data?.messages ?? []).map((m, i) => (
               <button
                 key={m.id}
                 data-testid={`sample-chip-${i + 1}`}

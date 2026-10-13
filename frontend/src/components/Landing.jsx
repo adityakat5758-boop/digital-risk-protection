@@ -1,12 +1,20 @@
 'use client';
 import { useState } from 'react';
-import { Search, ShieldCheck, Info } from 'lucide-react';
+import { Search, ShieldCheck, Info, Link2 } from 'lucide-react';
 import { useApp } from './AppContext';
 import { isSupportedBrand } from '@/data/provider';
 import { Footer } from './common';
 
+const CHIP = 'rounded-full border border-teal-500/40 bg-teal-500/10 px-4 py-1.5 font-medium text-teal-200 transition-colors hover:bg-teal-500/20';
+const EXAMPLE_BRANDS = ['Zenvyra', 'Paynest', 'Bytebite', 'Learnova'];
+const EXAMPLE_LINKS = [
+  { id: 'paynest', link: 'https://paynest-cashback.example/claim', text: 'Claim your Paynest cashback reward here: https://paynest-cashback.example/claim' },
+  { id: 'bytebite', link: 'https://bytebite-refund.example/form', text: 'Your Bytebite refund is pending. Fill this form to get your money back: https://bytebite-refund.example/form' },
+  { id: 'learnova', link: 'https://learnova-internship.example/apply', text: 'Congratulations! You are selected for a Learnova internship. Apply here: https://learnova-internship.example/apply' },
+];
+
 export function BrandSearch({ compact = false }) {
-  const { startScan } = useApp();
+  const { startScan, openAnalyzerWith } = useApp();
   const [query, setQuery] = useState('');
   const [error, setError] = useState(false);
 
@@ -33,16 +41,26 @@ export function BrandSearch({ compact = false }) {
           Scan
         </button>
       </form>
+      {error && (
+        <p data-testid="brand-unsupported-msg" className="mt-4 inline-flex items-center gap-1.5 text-sm text-amber-300">
+          <Info className="h-4 w-4" /> Demo dataset covers Zenvyra
+        </p>
+      )}
       <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-400">
-        {error && (
-          <span data-testid="brand-unsupported-msg" className="inline-flex items-center gap-1.5 text-amber-300">
-            <Info className="h-4 w-4" /> Demo dataset covers Zenvyra
-          </span>
-        )}
         <span>Try:</span>
-        <button data-testid="example-chip-zenvyra" onClick={() => { setQuery('Zenvyra'); run('Zenvyra'); }} className="rounded-full border border-teal-500/40 bg-teal-500/10 px-4 py-1.5 font-medium text-teal-200 transition-colors hover:bg-teal-500/20">
-          Zenvyra
-        </button>
+        {EXAMPLE_BRANDS.map((b) => (
+          <button key={b} data-testid={`example-chip-${b.toLowerCase()}`} onClick={() => { setQuery(b); run(b); }} className={CHIP}>
+            {b}
+          </button>
+        ))}
+      </div>
+      <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-400">
+        <span>Try a suspicious link:</span>
+        {EXAMPLE_LINKS.map(({ id, link, text }) => (
+          <button key={id} data-testid={`example-link-chip-${id}`} onClick={() => openAnalyzerWith(text)} className={`${CHIP} inline-flex items-center gap-1.5`}>
+            <Link2 className="h-3.5 w-3.5" /> {link}
+          </button>
+        ))}
       </div>
     </div>
   );
